@@ -1,0 +1,14 @@
+[
+  {
+    "repository": "Psycho-Kernel",
+    "target_path": "kernel/leeco/x3"
+  },
+  {
+    "repository": "proprietary_vendor_leeco_x3",
+    "target_path": "vendor/leeco/x3"
+  },
+  {
+    "repository": "android_device_leeco_x3"
+    "target_path": "device/leeco/x3"
+  }
+]
