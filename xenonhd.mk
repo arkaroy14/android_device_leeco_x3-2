@@ -12,7 +12,7 @@ $(call inherit-product, vendor/xenonhd/config/common_full_phone.mk)
 BOARD_VENDOR := LeEco
 PRODUCT_BRAND := LeEco
 PRODUCT_DEVICE := X3
-PRODUCT_NAME := xenonhd_x3
+PRODUCT_NAME := X3
 PRODUCT_MANUFACTURER := LeEco
 PRODUCT_MODEL := Le 1s
 TARGET_VENDOR := LeEco
