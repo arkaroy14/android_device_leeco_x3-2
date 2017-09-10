@@ -17,16 +17,20 @@ PRODUCT_MANUFACTURER := LeEco
 PRODUCT_MODEL := Le 1s
 TARGET_VENDOR := LeEco
 
+PRODUCT_PROPERTY_OVERRIDES += ro.xenonhd.maintainer=Psycho-Mods
+
 # Root options currently will use no root by default. wItS
-#ROOT_METHOD=magisk -- to compile builds with Magisk root
+ROOT_METHOD=magisk
 #ROOT_METHOD=su -- to compile builds with default su provided by LineageOS
 # Without any of these flags the builds will be unrooted and won't include Adaway & KernelAdiutor
 
 # 3rd party apps - choose which you want to build
 PRODUCT_PACKAGES += \
+   AdAway \
+   KernelAdiutor \
    Phonograph \
    substratum \
-    MiXplorer
+   MiXplorer
 
 # Use the latest approved GMS identifiers unless running a signed build
 ifneq ($(SIGN_BUILD),true)

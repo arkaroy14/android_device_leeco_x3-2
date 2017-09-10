@@ -15,8 +15,12 @@ LOCAL_PATH := device/leeco/x3
 DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay
 
 # Screen density
-PRODUCT_AAPT_CONFIG := normal xxhdpi
+PRODUCT_AAPT_CONFIG := normal
 PRODUCT_AAPT_PREF_CONFIG := xxhdpi
+
+# Boot animation
+TARGET_SCREEN_HEIGHT := 1920
+TARGET_SCREEN_WIDTH := 1080
 
 # Recovery allowed devices
 TARGET_OTA_ASSERT_DEVICE := x3,X500,X507,X509,X3,x500,x507,x509,X502,x502
@@ -88,7 +92,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
 	lib_driver_cmd_mt66xx \
 	libwpa_client \
+  dhcpcd.conf \
 	hostapd \
+  wpa_supplicant.conf \
 	wpa_supplicant
 
 # Media
