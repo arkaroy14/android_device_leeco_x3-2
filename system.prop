@@ -55,6 +55,8 @@ ro.zygote.preload.enable=0
 persist.sys.button_jack_profile=volume
 persist.sys.button_jack_switch=0
 
+qemu.hw.mainkeys=1
+
 #default timezone
 persist.sys.defaulttimezone=Asia/Kolkata
 
@@ -66,7 +68,7 @@ ro.kernel.zio=38,108,105,16
 # Disable dirty region for Mali
 debug.hwui.render_dirty_regions=false
 
-ro.sf.lcd_density=420
+ro.sf.lcd_density=400
 
 # performance
 ro.mtk_perf_simple_start_win=1
@@ -173,6 +175,8 @@ ro.mtk_lte_support=1
 ro.mtk_safemedia_support=1
 ro.mtk_umts_tdd128_mode=1
 ro.mtk_cam_mav_support=1
+camera.disable_zsl_mode=1
+persist.debug.wfd.enable=1
 ro.mtk_cam_vfb=1
 ro.sim_refresh_reset_by_modem=1
 ro.mtk_external_sim_support=1

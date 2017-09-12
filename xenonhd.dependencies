@@ -5,7 +5,7 @@
     "branch": "master"
   },
   {
-    "repository": "sscsps/proprietary_vendor_leeco",
+    "repository": "psycho-source/proprietary_vendor_leeco",
     "target_path": "vendor/leeco",
     "branch": "master"
   },
