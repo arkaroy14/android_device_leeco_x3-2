@@ -6,25 +6,25 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 $(call inherit-product, device/leeco/x3/device.mk)
 
 # Inherit common product files.
-$(call inherit-product, vendor/xosp/config/common_full_phone.mk)
-$(call inherit-product, vendor/xosp/config/xosp.mk)
+$(call inherit-product, vendor/omni/config/common.mk)
 
 # Set those variables here to overwrite the inherited values.
 BOARD_VENDOR := LeEco
 PRODUCT_BRAND := LeEco
 PRODUCT_DEVICE := x3
-PRODUCT_NAME := xosp_x3
+PRODUCT_NAME := omni_x3
 PRODUCT_MANUFACTURER := LeEco
 PRODUCT_MODEL := Le 1s
 TARGET_VENDOR := LeEco
 
 # Root options currently will use no root by default. wItS
-ROOT_METHOD=magisk
+#ROOT_METHOD=magisk
 #ROOT_METHOD=su -- to compile builds with default su provided by LineageOS
 # Without any of these flags the builds will be unrooted and won't include Adaway & KernelAdiutor
 
 # Use the latest approved GMS identifiers unless running a signed build
-ifneq ($(SIGN_BUILD),true)
+
+PRODUCT_GMS_CLIENTID_BASE := android-letv
+
 PRODUCT_BUILD_PROP_OVERRIDES += \
-    BUILD_FINGERPRINT=Letv/Le1s_CN/X3:6.0/DBXCNOP5902302082S/1486532099:user/release-keys
-endif
+        BUILD_FINGERPRINT=Letv/Le1s_CN/X3:6.0/DBXCNOP5902302082S/1486532099:user/release-keys
