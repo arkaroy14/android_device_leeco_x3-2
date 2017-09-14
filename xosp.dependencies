@@ -2,16 +2,16 @@
   {
     "repository": "psycho-source/Psycho-Kernel",
     "target_path": "kernel/device/leeco/x3",
-    "branch": "master"
+    "branch": "xosp-n"
   },
   {
     "repository": "psycho-source/proprietary_vendor_leeco_x3",
     "target_path": "vendor/leeco",
-    "branch": "master"
+    "branch": "xosp-n"
   },
   {
     "repository": "psycho-source/android_device_leeco_x3",
     "target_path": "device/leeco/x3",
-    "branch": "master"
+    "branch": "xosp-n"
   }
 ]
