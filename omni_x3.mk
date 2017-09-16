@@ -6,13 +6,14 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 $(call inherit-product, device/leeco/x3/device.mk)
 
 # Inherit common product files.
-$(call inherit-product, vendor/mk/config/common_full_phone.mk)
+$(call inherit-product, vendor/omni/config/gsm.mk)
+$(call inherit-product, vendor/omni/config/common.mk)
 
 # Set those variables here to overwrite the inherited values.
 BOARD_VENDOR := LeEco
 PRODUCT_BRAND := LeEco
 PRODUCT_DEVICE := x3
-PRODUCT_NAME := mk_x3
+PRODUCT_NAME := omni_x3
 PRODUCT_MANUFACTURER := LeEco
 PRODUCT_MODEL := Le 1s
 TARGET_VENDOR := LeEco
