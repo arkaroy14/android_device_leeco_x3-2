@@ -1,2 +1,2 @@
 PRODUCT_MAKEFILES := \
-	$(LOCAL_DIR)/mokee.mk
+	$(LOCAL_DIR)/omni_x3.mk
