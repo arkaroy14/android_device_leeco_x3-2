@@ -12,7 +12,7 @@ $(call inherit-product, vendor/mk/config/common_full_phone.mk)
 BOARD_VENDOR := LeEco
 PRODUCT_BRAND := LeEco
 PRODUCT_DEVICE := x3
-PRODUCT_NAME := mokee_x3
+PRODUCT_NAME := mk_x3
 PRODUCT_MANUFACTURER := LeEco
 PRODUCT_MODEL := Le 1s
 TARGET_VENDOR := LeEco
