@@ -1,1 +1,1 @@
-add_lunch_combo xosp_x3-userdebug
+add_lunch_combo mk_x3-userdebug
