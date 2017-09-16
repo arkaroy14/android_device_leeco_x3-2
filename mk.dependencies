@@ -1,7 +1,7 @@
 [
   {
     "repository": "psycho-source/Psycho-Kernel",
-    "target_path": "kernel/device/leeco/x3",
+    "target_path": "kernel/leeco/x3",
     "branch": "master"
   },
   {
