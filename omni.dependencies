@@ -12,6 +12,6 @@
   {
     "repository": "psycho-source/android_device_leeco_x3",
     "target_path": "device/leeco/x3",
-    "branch": "master"
+    "branch": "omni"
   }
 ]
