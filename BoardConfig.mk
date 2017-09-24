@@ -71,7 +71,7 @@ BOARD_MKBOOTIMG_ARGS := \
 	--second_offset 0x00e88000 \
 	--tags_offset 0x0df88000 \
 	--board MT6795
-TARGET_KERNEL_SOURCE := kernel/device/leeco/x3
+TARGET_KERNEL_SOURCE := kernel/leeco/x3
 TARGET_KERNEL_CONFIG := x500_defconfig
 TARGET_KERNEL_CROSS_COMPILE_PREFIX := aarch64-linux-android-
 BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
