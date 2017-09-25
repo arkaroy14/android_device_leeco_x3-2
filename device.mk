@@ -300,8 +300,8 @@ PRODUCT_PACKAGES += \
 	libm4u
 
 # Engineering mode
-PRODUCT_PACKAGES += \
-	EngineerMode
+#PRODUCT_PACKAGES += \
+#EngineerMode
 
 # Vulkan
 PRODUCT_COPY_FILES += \
