@@ -18,10 +18,6 @@ DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay
 PRODUCT_AAPT_CONFIG := normal
 PRODUCT_AAPT_PREF_CONFIG := xxhdpi
 
-# Boot animation
-TARGET_SCREEN_HEIGHT := 1920
-TARGET_SCREEN_WIDTH := 1080
-
 # Recovery allowed devices
 TARGET_OTA_ASSERT_DEVICE := x3,X500,X507,X509,X3,x500,x507,x509,X502,x502
 
@@ -32,8 +28,8 @@ PRODUCT_PACKAGES += \
 
 # Camera
 PRODUCT_PACKAGES += \
-  Camera2 \
-	Snap
+	Snap \
+	libcamera_parameters_ext
 
 # Charger
 PRODUCT_PACKAGES += \
@@ -43,7 +39,7 @@ PRODUCT_PACKAGES += \
 # Torch
 PRODUCT_PACKAGES += \
 	Torch
-
+     
 # Other
 PRODUCT_PACKAGES += \
 	librs_jni \
@@ -98,11 +94,12 @@ PRODUCT_PACKAGES += \
 
 # Media
 PRODUCT_COPY_FILES += \
+	$(LOCAL_PATH)/camera/camerasize.xml:system/etc/camerasize.xml \
 	frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml \
 	frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml \
 	frameworks/av/media/libstagefright/data/media_codecs_google_video_le.xml:system/etc/media_codecs_google_video_le.xml \
 	frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml
-media.stagefright.legacyencoder=0
+	media.stagefright.legacyencoder=0
 
 # Filesystem management tools
 PRODUCT_PACKAGES += \
@@ -180,6 +177,7 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_COPY_FILES += \
 	$(LOCAL_PATH)/configs/media/media_codecs.xml:system/etc/media_codecs.xml \
+	$(LOCAL_PATH)/configs/media/media_codecs.xml:system/etc/permissions/media_codecs.xml \
 	$(LOCAL_PATH)/configs/media/media_codecs_ffmpeg.xml:system/etc/media_codecs_ffmpeg.xml \
 	$(LOCAL_PATH)/configs/media/media_codecs_mediatek_audio.xml:system/etc/media_codecs_mediatek_audio.xml\
 	$(LOCAL_PATH)/configs/media/media_codecs_mediatek_video.xml:system/etc/media_codecs_mediatek_video.xml \
@@ -251,6 +249,9 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
 	$(LOCAL_PATH)/configs/agps_profiles_conf2.xml:system/etc/agps_profiles_conf2.xml
 
+PRODUCT_PACKAGES += \
+        fingerprint.default
+ 
 PRODUCT_COPY_FILES += \
 	frameworks/native/data/etc/android.hardware.fingerprint.xml:system/etc/permissions/android.hardware.fingerprint.xml
 
@@ -285,7 +286,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
 	gps.mt6795 \
 	libcurl
-
+	
 # Mediaserver with system group
 PRODUCT_COPY_FILES += \
 	$(LOCAL_PATH)/etc/init/mediaserver.rc:system/etc/init/mediaserver.rc
@@ -299,8 +300,11 @@ PRODUCT_PACKAGES += \
 	libm4u
 
 # Engineering mode
-PRODUCT_PACKAGES += \
-	EngineerMode
+#PRODUCT_PACKAGES += \
+#EngineerMode
 
-# Include explicitly to work around Facelock issues
-PRODUCT_PACKAGES += libprotobuf-cpp-full
+# Vulkan
+PRODUCT_COPY_FILES += \
+    frameworks/native/data/etc/android.hardware.vulkan.level-0.xml:system/etc/permissions/android.hardware.vulkan.level.xml \
+    frameworks/native/data/etc/android.hardware.vulkan.version-1_0_3.xml:system/etc/permissions/android.hardware.vulkan.version.xml
+

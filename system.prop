@@ -55,8 +55,6 @@ ro.zygote.preload.enable=0
 persist.sys.button_jack_profile=volume
 persist.sys.button_jack_switch=0
 
-qemu.hw.mainkeys=1
-
 #default timezone
 persist.sys.defaulttimezone=Asia/Kolkata
 
@@ -80,9 +78,9 @@ ro.mtk_perf_response_time=1
 ro.mtk_trustonic_tee_support=1
 persist.sys.le_fast_chrg_enable=1
 ro.mediatek.chip_ver=S01
-ro.config.ringtone=Ring_Synth_04.ogg
-ro.config.notification_sound=pixiedust.ogg
-ro.config.alarm_alert=Alarm_Classic.ogg
+ro.config.ringtone=Callisto.ogg
+ro.config.notification_sound=Argon.ogg
+ro.config.alarm_alert=xperia.ogg
 dalvik.vm.heapgrowthlimit=256m
 dalvik.vm.heapsize=512m
 ro.mediatek.chip_ver=S01
@@ -184,6 +182,9 @@ ro.mtk_motion_track_support=1
 ro.mtk_slidevideo_support=1
 ro.mtk_bg_power_saving_support=1
 ro.mtk_bg_power_saving_ui=1
+ro.ril.disable.power.collapse=1
+pm.sleep_mode=1
+wifi.supplicant_scan_interval=360
 ro.sim_me_lock_mode=0
 ro.mtk_dual_mic_support=1
 ro.mtk_is_tablet=0
@@ -201,7 +202,6 @@ persist.power.useautobrightadj=true
 ro.com.android.dataroaming=true
 ro.telephony.ril_class=MT6795
 ro.hardware=mt6795
-#ro.build.system_root_image=true
 media.stagefright.legacyencoder=true
 media.stagefright.less-secure=true
 # ClearMotion
