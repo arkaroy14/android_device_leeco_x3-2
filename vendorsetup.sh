@@ -1,1 +1,1 @@
-add_lunch_combo xenonhd_x3-userdebug
+add_lunch_combo aoscp_x3-userdebug
