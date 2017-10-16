@@ -1,2 +1,2 @@
 PRODUCT_MAKEFILES := \
-	$(LOCAL_DIR)/aoscp.mk
+	$(LOCAL_DIR)/carbon_x3.mk

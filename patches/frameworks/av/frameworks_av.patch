@@ -6,7 +6,7 @@ new mode 100755
 index 76f92e7..1cc278d
 --- a/camera/CameraParameters.cpp
 +++ b/camera/CameraParameters.cpp
-@@ -131,6 +131,8 @@ const char CameraParameters::FLASH_MODE_AUTO[] = "auto";
+@@ -133,6 +133,8 @@ const char CameraParameters::FLASH_MODE_AUTO[] = "auto";
  const char CameraParameters::FLASH_MODE_ON[] = "on";
  const char CameraParameters::FLASH_MODE_RED_EYE[] = "red-eye";
  const char CameraParameters::FLASH_MODE_TORCH[] = "torch";

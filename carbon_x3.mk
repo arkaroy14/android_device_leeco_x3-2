@@ -8,9 +8,9 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 # Inherit device configuration
 $(call inherit-product, $(LOCAL_PATH)/device.mk)
 
-# Inherit some common XenonHD stuff.
-$(call inherit-product, vendor/aoscp/configs/common.mk)
-$(call inherit-product, vendor/aoscp/configs/telephony.mk)
+# Inherit some common Carbon stuff.
+$(call inherit-product, vendor/carbon/config/common.mk)
+$(call inherit-product, vendor/carbon/config/gsm.mk)
 
 # Device display
 TARGET_SCREEN_HEIGHT := 1920
@@ -20,7 +20,7 @@ TARGET_SCREEN_WIDTH := 1080
 BOARD_VENDOR := LeEco
 PRODUCT_BRAND := LeEco
 PRODUCT_DEVICE := x3
-PRODUCT_NAME := aoscp_x3
+PRODUCT_NAME := carbon_x3
 PRODUCT_MANUFACTURER := LeEco
 PRODUCT_MODEL := Le 1s
 TARGET_VENDOR := LeEco
