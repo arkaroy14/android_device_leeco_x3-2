@@ -17,17 +17,12 @@
 package com.android.ims.internal;
 
 import android.os.Message;
-import android.os.Messenger;
 import android.os.RemoteException;
-import android.telecom.Connection;
 
-import java.util.Objects;
-import android.util.Log;
 import com.android.ims.ImsCallProfile;
 import com.android.ims.ImsConferenceState;
 import com.android.ims.ImsReasonInfo;
 import com.android.ims.ImsStreamMediaProfile;
-import com.android.ims.ImsSuppServiceNotification;
 
 /**
  * Provides the call initiation/termination, and media exchange between two IMS endpoints.
@@ -382,42 +377,6 @@ public class ImsCallSession {
                                        int mode) {
             // no-op
         }
-
-        /**
-         * Notifies of a change to the multiparty state for this {@code ImsCallSession}.
-         *
-         * @param session The call session.
-         * @param isMultiParty {@code true} if the session became multiparty, {@code false}
-         *      otherwise.
-         */
-        public void callSessionMultipartyStateChanged(ImsCallSession session,
-                boolean isMultiParty) {
-            // no-op
-        }
-
-        /**
-         * Called when the session supplementary service is received
-         *
-         * @param session the session object that carries out the IMS session
-         */
-        public void callSessionSuppServiceReceived(ImsCallSession session,
-                ImsSuppServiceNotification suppServiceInfo) {
-        }
-
-        // MTK
-
-        /// M: ALPS02256671. For PAU information changed. @{
-        /**
-         * Notifies of a change to the PAU information.
-        *
-         * @param session The call session.
-         * @param profile The call profile.
-         * @hide
-         */
-        public void callSessionPauInfoChanged(ImsCallSession session, ImsCallProfile profile) {
-            // no-op
-        }
-        /// @}
     }
 
     private final IImsCallSession miSession;
@@ -887,17 +846,7 @@ public class ImsCallSession {
         }
 
         try {
-             // MTK
-            /// M: ALPS02321477 @{
-            /// Google issue. Original sendDtmf could not pass Message.target to another process,
-            /// because Message.writeToParcel didn't write target. Workaround this issue by adding
-            /// a new API which passes target by Messenger.
-            if (result != null && result.getTarget() != null) {
-                Messenger target = new Messenger(result.getTarget());
-                miSession.sendDtmfbyTarget(c, result, target);
-            } else {
-             miSession.sendDtmf(c, result);
-            }  // MTK
+            miSession.sendDtmf(c, result);
         } catch (RemoteException e) {
         }
     }
@@ -1070,9 +1019,10 @@ public class ImsCallSession {
         @Override
         public void callSessionMergeStarted(IImsCallSession session,
                 IImsCallSession newSession, ImsCallProfile profile) {
-            // This callback can be used for future use to add additional
-            // functionality that may be needed between conference start and complete
-            Log.d(TAG, "callSessionMergeStarted");
+            if (mListener != null) {
+                mListener.callSessionMergeStarted(ImsCallSession.this,
+                        new ImsCallSession(newSession), profile);
+            }
         }
 
         /**
@@ -1081,25 +1031,9 @@ public class ImsCallSession {
          * @param session The call session.
          */
         @Override
-        public void callSessionMergeComplete(IImsCallSession newSession) {
+        public void callSessionMergeComplete(IImsCallSession session) {
             if (mListener != null) {
-                if (newSession != null) {
-                    // Check if the active session is the same session that was
-                    // active before the merge request was sent.
-                    ImsCallSession validActiveSession = ImsCallSession.this;
-                    try {
-                        if (!Objects.equals(miSession.getCallId(), newSession.getCallId())) {
-                            // New session created after conference
-                            validActiveSession = new ImsCallSession(newSession);
-                        }
-                    } catch (RemoteException rex) {
-                        Log.e(TAG, "callSessionMergeComplete: exception for getCallId!");
-                    }
-                    mListener.callSessionMergeComplete(validActiveSession);
-               } else {
-                   // Session already exists. Hence no need to pass
-                   mListener.callSessionMergeComplete(null);
-               }
+                mListener.callSessionMergeComplete(ImsCallSession.this);
             }
         }
 
@@ -1244,9 +1178,6 @@ public class ImsCallSession {
             }
         }
 
-        /**
-         * Notifies of handover failure info for this call
-         */
         @Override
         public void callSessionHandoverFailed(IImsCallSession session,
                                        int srcAccessTech, int targetAccessTech,
@@ -1267,47 +1198,6 @@ public class ImsCallSession {
                 mListener.callSessionTtyModeReceived(ImsCallSession.this, mode);
             }
         }
-
-        /**
-         * Notifies of a change to the multiparty state for this {@code ImsCallSession}.
-         *
-         * @param session The call session.
-         * @param isMultiParty {@code true} if the session became multiparty, {@code false}
-         *      otherwise.
-         */
-        public void callSessionMultipartyStateChanged(IImsCallSession session,
-                boolean isMultiParty) {
-
-            if (mListener != null) {
-                mListener.callSessionMultipartyStateChanged(ImsCallSession.this, isMultiParty);
-            }
-        }
-
-        @Override
-        public void callSessionSuppServiceReceived(IImsCallSession session,
-                ImsSuppServiceNotification suppServiceInfo ) {
-            if (mListener != null) {
-                mListener.callSessionSuppServiceReceived(ImsCallSession.this, suppServiceInfo);
-            }
-        }
-
-        // MTK
-
-        /// M: ALPS02256671. For PAU information changed. @{
-        /**
-         * Notifies of a change to the PAU information.
-         *
-         * @param session The call session.
-         * @param profile The call profile.
-         * @hide
-         */
-        public void callSessionPauInfoChanged(IImsCallSession session, ImsCallProfile profile) {
-            if (mListener != null) {
-                mListener.callSessionPauInfoChanged(ImsCallSession.this, profile);
-            }
-        }
-        /// @}
-
     }
 
     /**
@@ -1328,26 +1218,4 @@ public class ImsCallSession {
         sb.append("]");
         return sb.toString();
     }
-
-    // MTK
-
-    /// M: For one-key conference MT displayed as incoming conference call. @{
-    /**
-     * Determines if the incoming session is multiparty.
-     *
-     * @return {@code True} if the incoming session is multiparty.
-     * @hide
-     */
-    public boolean isIncomingCallMultiparty() {
-        if (mClosed) {
-            return false;
-        }
-
-        try {
-            return miSession.isIncomingCallMultiparty();
-        } catch (RemoteException e) {
-            return false;
-        }
-    }
-    /// @}
 }

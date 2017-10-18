@@ -143,19 +143,19 @@ public interface ImsUtInterface {
     /**
      * Modifies the configuration of the call barring.
      */
-    public void updateCallBarring(int cbType, int action,
+    public void updateCallBarring(int cbType, boolean enable,
             Message result, String[] barrList);
 
     /**
      * Modifies the configuration of the call forward.
      */
     public void updateCallForward(int action, int condition, String number,
-            int serviceClass, int timeSeconds, Message result);
+            int timeSeconds, Message result);
 
     /**
      * Modifies the configuration of the call waiting.
      */
-    public void updateCallWaiting(boolean enable, int serviceClass, Message result);
+    public void updateCallWaiting(boolean enable, Message result);
 
     /**
      * Updates the configuration of the CLIR supplementary service.
@@ -176,8 +176,6 @@ public interface ImsUtInterface {
      * Updates the configuration of the COLP supplementary service.
      */
     public void updateCOLP(boolean enable, Message result);
-
-    // MTK
 
     /// M: SS OP01 Ut @{
     /**

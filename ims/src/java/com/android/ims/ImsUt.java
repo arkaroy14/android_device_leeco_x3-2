@@ -310,7 +310,7 @@ public class ImsUt implements ImsUtInterface {
      * Modifies the configuration of the call barring.
      */
     @Override
-    public void updateCallBarring(int cbType, int action, Message result, String[] barrList) {
+    public void updateCallBarring(int cbType, boolean enable, Message result, String[] barrList) {
         if (DBG) {
             if (barrList != null) {
                 String bList = new String();
@@ -318,17 +318,17 @@ public class ImsUt implements ImsUtInterface {
                     bList.concat(barrList[i] + " ");
                 }
                 log("updateCallBarring :: Ut=" + miUt + ", cbType=" + cbType
-                        + ", action=" + action + ", barrList=" + bList);
+                        + ", enable=" + enable + ", barrList=" + bList);
             }
             else {
                 log("updateCallBarring :: Ut=" + miUt + ", cbType=" + cbType
-                        + ", action=" + action);
+                        + ", enable=" + enable);
             }
         }
 
         synchronized(mLockObj) {
             try {
-                int id = miUt.updateCallBarring(cbType, action, barrList);
+                int id = miUt.updateCallBarring(cbType, enable, barrList);
 
                 if (id < 0) {
                     sendFailureReport(result,
@@ -349,16 +349,16 @@ public class ImsUt implements ImsUtInterface {
      */
     @Override
     public void updateCallForward(int action, int condition, String number,
-            int serviceClass, int timeSeconds, Message result) {
+            int timeSeconds, Message result) {
         if (DBG) {
             log("updateCallForward :: Ut=" + miUt + ", action=" + action
                     + ", condition=" + condition + ", number=" + number
-                    +  ", serviceClass=" + serviceClass + ", timeSeconds=" + timeSeconds);
+                    + ", timeSeconds=" + timeSeconds);
         }
 
         synchronized(mLockObj) {
             try {
-                int id = miUt.updateCallForward(action, condition, number, serviceClass, timeSeconds);
+                int id = miUt.updateCallForward(action, condition, number, timeSeconds);
 
                 if (id < 0) {
                     sendFailureReport(result,
@@ -378,15 +378,14 @@ public class ImsUt implements ImsUtInterface {
      * Modifies the configuration of the call waiting.
      */
     @Override
-    public void updateCallWaiting(boolean enable, int serviceClass, Message result) {
+    public void updateCallWaiting(boolean enable, Message result) {
         if (DBG) {
-            log("updateCallWaiting :: Ut=" + miUt + ", enable=" + enable
-            + ",serviceClass="  + serviceClass);
+            log("updateCallWaiting :: Ut=" + miUt + ", enable=" + enable);
         }
 
         synchronized(mLockObj) {
             try {
-                int id = miUt.updateCallWaiting(enable, serviceClass);
+                int id = miUt.updateCallWaiting(enable);
 
                 if (id < 0) {
                     sendFailureReport(result,
@@ -673,8 +672,6 @@ public class ImsUt implements ImsUtInterface {
             }
         }
 
-                // MTK
-
         /// M: SS OP01 Ut @{
         /**
          * Notifies the status of the call forwarding in a time slot supplementary service.
@@ -691,8 +688,6 @@ public class ImsUt implements ImsUtInterface {
         }
         /// @}
     }
-
-    // MTK
 
     /// M: SS OP01 Ut @{
     /**
@@ -715,7 +710,7 @@ public class ImsUt implements ImsUtInterface {
                     return;
                 }
 
-               mPendingCmds.put(Integer.valueOf(id), result);
+                mPendingCmds.put(Integer.valueOf(id), result);
             } catch (RemoteException e) {
                 sendFailureReport(result,
                         new ImsReasonInfo(ImsReasonInfo.CODE_UT_SERVICE_UNAVAILABLE, 0));
@@ -753,8 +748,6 @@ public class ImsUt implements ImsUtInterface {
                         new ImsReasonInfo(ImsReasonInfo.CODE_UT_SERVICE_UNAVAILABLE, 0));
             }
         }
-     }
-    /// @}
-
     }
+    /// @}
 }

@@ -49,4 +49,23 @@ public class ImsException extends Exception {
     public int getCode() {
         return mCode;
     }
+
+    /// M: for debug. @{
+    /**
+     * Provides a string representation of the ImsException.
+     *
+     * @return String representation.
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(super.toString());
+        if (getCause() != null) {
+            sb.append(" cause: ");
+            sb.append(getCause().toString());
+        }
+        sb.append(" mCode: " + mCode);
+        return sb.toString();
+    }
+    /// @}
 }

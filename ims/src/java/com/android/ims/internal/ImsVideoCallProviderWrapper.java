@@ -16,15 +16,14 @@
 
 package com.android.ims.internal;
 
-import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.RemoteException;
+import android.telecom.CameraCapabilities;
 import android.telecom.Connection;
 import android.telecom.VideoProfile;
-import android.telecom.VideoProfile.CameraCapabilities;
 import android.view.Surface;
 
 import com.android.internal.os.SomeArgs;
@@ -47,7 +46,6 @@ public class ImsVideoCallProviderWrapper extends Connection.VideoProvider {
     private static final int MSG_CHANGE_PEER_DIMENSIONS = 4;
     private static final int MSG_CHANGE_CALL_DATA_USAGE = 5;
     private static final int MSG_CHANGE_CAMERA_CAPABILITIES = 6;
-    private static final int MSG_CHANGE_VIDEO_QUALITY = 7;
 
     private final IImsVideoCallProvider mVideoCallProvider;
     private final ImsVideoCallCallback mBinder;
@@ -93,35 +91,15 @@ public class ImsVideoCallProviderWrapper extends Connection.VideoProvider {
         }
 
         @Override
-        public void changeVideoQuality(int videoQuality) {
-            mHandler.obtainMessage(MSG_CHANGE_VIDEO_QUALITY, videoQuality, 0).sendToTarget();
-        }
-
-        @Override
-        public void changeCallDataUsage(long dataUsage) {
+        public void changeCallDataUsage(int dataUsage) {
             mHandler.obtainMessage(MSG_CHANGE_CALL_DATA_USAGE, dataUsage).sendToTarget();
         }
 
         @Override
-        public void changeCameraCapabilities(
-                VideoProfile.CameraCapabilities cameraCapabilities) {
+        public void changeCameraCapabilities(CameraCapabilities cameraCapabilities) {
             mHandler.obtainMessage(MSG_CHANGE_CAMERA_CAPABILITIES,
                     cameraCapabilities).sendToTarget();
         }
-
-        // MTK
-
-        /* M: ViLTE part start */
-        /* Different from AOSP, additional parameter "rotation" is added. */
-        @Override
-        public void changePeerDimensionsWithAngle(int width, int height, int rotation) {
-            SomeArgs args = SomeArgs.obtain();
-            args.arg1 = width;
-            args.arg2 = height;
-            args.arg3 = rotation;
-            mHandler.obtainMessage(MSG_CHANGE_PEER_DIMENSIONS_WITH_ANGLE, args).sendToTarget();
-        }
-        /* M: ViLTE part end */
     }
 
     /** Default handler used to consolidate binder method calls onto a single thread. */
@@ -159,30 +137,11 @@ public class ImsVideoCallProviderWrapper extends Connection.VideoProvider {
                     }
                     break;
                 case MSG_CHANGE_CALL_DATA_USAGE:
-                    changeCallDataUsage((long) msg.obj);
+                    changeCallDataUsage(msg.arg1);
                     break;
                 case MSG_CHANGE_CAMERA_CAPABILITIES:
-                    changeCameraCapabilities((VideoProfile.CameraCapabilities) msg.obj);
+                    changeCameraCapabilities((CameraCapabilities) msg.obj);
                     break;
-                case MSG_CHANGE_VIDEO_QUALITY:
-                    changeVideoQuality(msg.arg1);
-                    break;
-                // MTK
-                /* M: ViLTE part start */
-                /* Different from AOSP, additional parameter "rotation" is added. */
-                case MSG_CHANGE_PEER_DIMENSIONS_WITH_ANGLE:
-                    args = (SomeArgs) msg.obj;
-                    try {
-                        int width = (int) args.arg1;
-                        int height = (int) args.arg2;
-                        int rotation = (int) args.arg3;
-                        // MTK TODO: wow this is wonderfully-hidden intrusive modification...
-                        // changePeerDimensionsWithAngle(width, height, rotation);
-                    } finally {
-                        args.recycle();
-                    }
-                    break;
-                /* M: ViLTE part end */
                 default:
                     break;
             }
@@ -245,9 +204,9 @@ public class ImsVideoCallProviderWrapper extends Connection.VideoProvider {
     }
 
     /** @inheritDoc */
-    public void onSendSessionModifyRequest(VideoProfile fromProfile, VideoProfile toProfile) {
+    public void onSendSessionModifyRequest(VideoProfile requestProfile) {
         try {
-            mVideoCallProvider.sendSessionModifyRequest(fromProfile, toProfile);
+            mVideoCallProvider.sendSessionModifyRequest(requestProfile);
         } catch (RemoteException e) {
         }
     }
@@ -277,29 +236,10 @@ public class ImsVideoCallProviderWrapper extends Connection.VideoProvider {
     }
 
     /** @inheritDoc */
-    public void onSetPauseImage(Uri uri) {
+    public void onSetPauseImage(String uri) {
         try {
             mVideoCallProvider.setPauseImage(uri);
         } catch (RemoteException e) {
         }
     }
-
-    // MTK
-
-    private static final int MSG_MTK_BASE = 100;
-    private static final int MSG_CHANGE_PEER_DIMENSIONS_WITH_ANGLE = MSG_MTK_BASE;
-
-    /* M: ViLTE part start */
-    /** @inheritDoc */
-    public void onSetUIMode(int mode) {
-        try {
-            mVideoCallProvider.setUIMode(mode);
-        } catch (RemoteException e) {
-        }
-    }
-
-    public IImsVideoCallProvider getProvider() {
-        return mVideoCallProvider;
-    }
-    /* M: ViLTE part end */
 }

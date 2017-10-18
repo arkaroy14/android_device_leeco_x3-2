@@ -16,16 +16,13 @@
 
 package com.android.ims.internal;
 
-import com.android.internal.os.SomeArgs;
-
-import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.RemoteException;
+import android.telecom.CameraCapabilities;
 import android.telecom.Connection;
 import android.telecom.VideoProfile;
-import android.telecom.VideoProfile.CameraCapabilities;
 import android.view.Surface;
 
 public abstract class ImsVideoCallProvider {
@@ -70,18 +67,9 @@ public abstract class ImsVideoCallProvider {
                 case MSG_SET_ZOOM:
                     onSetZoom((Float) msg.obj);
                     break;
-                case MSG_SEND_SESSION_MODIFY_REQUEST: {
-                    SomeArgs args = (SomeArgs) msg.obj;
-                    try {
-                        VideoProfile fromProfile = (VideoProfile) args.arg1;
-                        VideoProfile toProfile = (VideoProfile) args.arg2;
-
-                        onSendSessionModifyRequest(fromProfile, toProfile);
-                    } finally {
-                        args.recycle();
-                    }
+                case MSG_SEND_SESSION_MODIFY_REQUEST:
+                    onSendSessionModifyRequest((VideoProfile) msg.obj);
                     break;
-                }
                 case MSG_SEND_SESSION_MODIFY_RESPONSE:
                     onSendSessionModifyResponse((VideoProfile) msg.obj);
                     break;
@@ -92,14 +80,8 @@ public abstract class ImsVideoCallProvider {
                     onRequestCallDataUsage();
                     break;
                 case MSG_SET_PAUSE_IMAGE:
-                    onSetPauseImage((Uri) msg.obj);
+                    onSetPauseImage((String) msg.obj);
                     break;
-                // MTK
-                /* M: ViLTE part start */
-                case MSG_SET_UI_MODE:
-                    onSetUIMode((int) msg.obj);
-                    break;
-                /* M: ViLTE part end */
                 default:
                     break;
             }
@@ -127,18 +109,16 @@ public abstract class ImsVideoCallProvider {
         }
 
         public void setDeviceOrientation(int rotation) {
-            mProviderHandler.obtainMessage(MSG_SET_DEVICE_ORIENTATION, rotation, 0).sendToTarget();
+            mProviderHandler.obtainMessage(MSG_SET_DEVICE_ORIENTATION, rotation).sendToTarget();
         }
 
         public void setZoom(float value) {
             mProviderHandler.obtainMessage(MSG_SET_ZOOM, value).sendToTarget();
         }
 
-        public void sendSessionModifyRequest(VideoProfile fromProfile, VideoProfile toProfile) {
-            SomeArgs args = SomeArgs.obtain();
-            args.arg1 = fromProfile;
-            args.arg2 = toProfile;
-            mProviderHandler.obtainMessage(MSG_SEND_SESSION_MODIFY_REQUEST, args).sendToTarget();
+        public void sendSessionModifyRequest(VideoProfile requestProfile) {
+            mProviderHandler.obtainMessage(
+                    MSG_SEND_SESSION_MODIFY_REQUEST, requestProfile).sendToTarget();
         }
 
         public void sendSessionModifyResponse(VideoProfile responseProfile) {
@@ -154,17 +134,9 @@ public abstract class ImsVideoCallProvider {
             mProviderHandler.obtainMessage(MSG_REQUEST_CALL_DATA_USAGE).sendToTarget();
         }
 
-        public void setPauseImage(Uri uri) {
+        public void setPauseImage(String uri) {
             mProviderHandler.obtainMessage(MSG_SET_PAUSE_IMAGE, uri).sendToTarget();
         }
-
-        // MTK
-
-        /* M: ViLTE part start */
-        public void setUIMode(int mode) {
-            mProviderHandler.obtainMessage(MSG_SET_UI_MODE, mode).sendToTarget();
-        }
-        /* M: ViLTE part end */
     }
 
     public ImsVideoCallProvider() {
@@ -194,8 +166,7 @@ public abstract class ImsVideoCallProvider {
     public abstract void onSetZoom(float value);
 
     /** @see Connection.VideoProvider#onSendSessionModifyRequest */
-    public abstract void onSendSessionModifyRequest(VideoProfile fromProfile,
-            VideoProfile toProfile);
+    public abstract void onSendSessionModifyRequest(VideoProfile requestProfile);
 
     /** @see Connection.VideoProvider#onSendSessionModifyResponse */
     public abstract void onSendSessionModifyResponse(VideoProfile responseProfile);
@@ -207,7 +178,7 @@ public abstract class ImsVideoCallProvider {
     public abstract void onRequestCallDataUsage();
 
     /** @see Connection.VideoProvider#onSetPauseImage */
-    public abstract void onSetPauseImage(Uri uri);
+    public abstract void onSetPauseImage(String uri);
 
     /** @see Connection.VideoProvider#receiveSessionModifyRequest */
     public void receiveSessionModifyRequest(VideoProfile VideoProfile) {
@@ -251,7 +222,7 @@ public abstract class ImsVideoCallProvider {
     }
 
     /** @see Connection.VideoProvider#changeCallDataUsage */
-    public void changeCallDataUsage(long dataUsage) {
+    public void changeCallDataUsage(int dataUsage) {
         if (mCallback != null) {
             try {
                 mCallback.changeCallDataUsage(dataUsage);
@@ -269,26 +240,4 @@ public abstract class ImsVideoCallProvider {
             }
         }
     }
-
-    /** @see Connection.VideoProvider#changeVideoQuality */
-    public void changeVideoQuality(int videoQuality) {
-        if (mCallback != null) {
-            try {
-                mCallback.changeVideoQuality(videoQuality);
-            } catch (RemoteException ignored) {
-            }
-        }
-    }
-
-    // MTK
-
-    /* M: ViLTE part start */
-    private static final int MSG_MTK_BASE = 100;
-    private static final int MSG_SET_UI_MODE = MSG_MTK_BASE;
-    /* M: ViLTE part end */
-
-    /* M: ViLTE part start */
-    /** @see Connection.VideoProvider#onSetUIMode */
-    public abstract void onSetUIMode(int mode);
-    /* M: ViLTE part end */
 }
