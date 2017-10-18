@@ -1489,7 +1489,7 @@ public class ImsManager {
          */
         @Override
         public void onServiceDisconnected(int error) {
-            Rlog.d(TAG, "onServiceDisconnected entry "  error);
+            Rlog.d(TAG, "onServiceDisconnected entry ",  error);
         }
 
     }
@@ -1521,8 +1521,7 @@ public class ImsManager {
     public void setCallIndication(int serviceId, Intent incomingCallIndication,
             boolean isAllow) throws ImsException {
         if (DBG) {
-            log("setCallIndication :: serviceId="  serviceId
-                     ", incomingCallIndication="  incomingCallIndication);
+            log("setCallIndication :: serviceId=" + serviceId, "incomingCallIndication=" + incomingCallIndication);
         }
 
         checkAndThrowExceptionIfServiceUnavailable();
