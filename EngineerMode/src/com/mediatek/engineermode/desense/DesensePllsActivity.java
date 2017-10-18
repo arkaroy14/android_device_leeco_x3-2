@@ -3,7 +3,6 @@ package com.mediatek.engineermode.desense;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -14,8 +13,8 @@ import android.widget.Toast;
 
 import com.mediatek.engineermode.R;
 import com.mediatek.engineermode.ShellExe;
+import com.mediatek.xlog.Xlog;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +28,6 @@ public class DesensePllsActivity extends Activity implements
     private static final String COMMAND_GET_ALL_PLL = "cat /proc/clkmgr/pll_fsel";
     private static final String REGEX_PLL_GROUP = "\\[[\\s\\S]*?\\]";
     private static final String HEX_VALUE_DEFAULT = "-1";
-    private static final String PLL_FILE = "/proc/clkmgr/pll_fsel";
     private String[] mNameArray;
     private int[] mIdArray;
     private String[] mValueArray;
@@ -80,7 +78,7 @@ public class DesensePllsActivity extends Activity implements
         if (null != list) {
             mListData.clear();
             int size = list.size();
-            Log.v("@M_" + TAG, "PLLGetAllInfo list size = " + size);
+            Xlog.v(TAG, "PLLGetAllInfo list size = " + size);
             mNameArray = new String[size];
             mIdArray = new int[size];
             mValueArray = new String[size];
@@ -90,7 +88,7 @@ public class DesensePllsActivity extends Activity implements
                 mIdArray[i] = item.mId;
                 mValueArray[i] = item.mHexVal;
                 mListData.add(item.mName);
-                Log.v("@M_" + TAG, "PLLGetAllInfo list.get(i) = " + item.toString());
+                Xlog.v(TAG, "PLLGetAllInfo list.get(i) = " + item.toString());
             }
             result = true;
         }
@@ -136,18 +134,18 @@ public class DesensePllsActivity extends Activity implements
                         }
                     }
                 } catch (IllegalStateException e) {
-                    Log.w("@M_" + TAG, "getAllPllInfo IllegalStateException: "
+                    Xlog.w(TAG, "getAllPllInfo IllegalStateException: "
                             + e.getMessage());
                 } catch (NumberFormatException e) {
-                    Log.w("@M_" + TAG, "getAllPllInfo NumberFormatException: "
+                    Xlog.w(TAG, "getAllPllInfo NumberFormatException: "
                             + e.getMessage());
                 } catch (IndexOutOfBoundsException e) {
-                    Log.w("@M_" + TAG, "getAllPllInfo IndexOutOfBoundsException: "
+                    Xlog.w(TAG, "getAllPllInfo IndexOutOfBoundsException: "
                             + e.getMessage());
                 }
             }
         } catch (IOException e) {
-            Log.w("@M_" + TAG, "getAllPllInfo IOException: " + e.getMessage());
+            Xlog.w(TAG, "getAllPllInfo IOException: " + e.getMessage());
         }
         return listResult;
     }
@@ -162,10 +160,6 @@ public class DesensePllsActivity extends Activity implements
             return String.format("PllStruct: mId: %d, mName: %s, mHexVal: %s",
                     mId, mName, mHexVal);
         }
-    }
-
-    static boolean isSupport() {
-        return new File(PLL_FILE).exists();
     }
 
 }

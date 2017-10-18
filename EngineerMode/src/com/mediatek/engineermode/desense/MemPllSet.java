@@ -2,7 +2,6 @@ package com.mediatek.engineermode.desense;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -11,6 +10,7 @@ import android.widget.Toast;
 import com.mediatek.engineermode.ChipSupport;
 import com.mediatek.engineermode.R;
 import com.mediatek.engineermode.ShellExe;
+import com.mediatek.xlog.Xlog;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,7 +52,7 @@ public class MemPllSet extends Activity {
         if (!new File(FILE_DRAMC).exists() || !new File(FILE_DRAMC).exists()) {
             Toast.makeText(this, R.string.desense_mempll_notsupport,
                     Toast.LENGTH_SHORT).show();
-            Log.w("@M_" + TAG, "MemPllSet files not exist");
+            Xlog.w(TAG, "MemPllSet files not exist");
             finish();
             return;
         }
@@ -81,7 +81,7 @@ public class MemPllSet extends Activity {
     protected void onResume() {
         super.onResume();
         int current = getCurrentDramc();
-        Log.v("@M_" + TAG, "Current: " + current);
+        Xlog.v(TAG, "Current: " + current);
         if (0 == current) {
             Toast.makeText(this, R.string.desense_mempll_geterror,
                     Toast.LENGTH_SHORT).show();
@@ -116,7 +116,7 @@ public class MemPllSet extends Activity {
         int value = 0;
         strBuilder.append("cat ");
         strBuilder.append(FILE_DRAMC);
-        Log.v("@M_" + TAG, "get current dramc cmd: " + strBuilder.toString());
+        Xlog.v(TAG, "get current dramc cmd: " + strBuilder.toString());
         try {
             if (ShellExe.RESULT_SUCCESS == ShellExe.execCommand(strBuilder
                     .toString())) {
@@ -126,7 +126,7 @@ public class MemPllSet extends Activity {
                 scan.close();
             }
         } catch (IOException e) {
-            Log.w("@M_" + TAG, "get current dramc IOException: " + e.getMessage());
+            Xlog.w(TAG, "get current dramc IOException: " + e.getMessage());
         }
         return value;
     }
@@ -138,38 +138,15 @@ public class MemPllSet extends Activity {
         strBuilder.append(value);
         strBuilder.append(" > ");
         strBuilder.append(FILE_DRAMC);
-        Log.v("@M_" + TAG, "set current dramc cmd: " + strBuilder.toString());
+        Xlog.v(TAG, "set current dramc cmd: " + strBuilder.toString());
         try {
             if (ShellExe.RESULT_SUCCESS == ShellExe.execCommand(strBuilder
                     .toString())) {
                 result = true;
             }
         } catch (IOException e) {
-            Log.w("@M_" + TAG, "set current dramc IOException: " + e.getMessage());
+            Xlog.w(TAG, "set current dramc IOException: " + e.getMessage());
         }
         return result;
-    }
-
-    static boolean isSupport() {
-        final int chip = ChipSupport.getChip();
-        boolean support = true;
-
-        if (chip == ChipSupport.MTK_6595_SUPPORT || chip == ChipSupport.MTK_6795_SUPPORT) {
-            support = false;
-        }
-
-        if (chip == ChipSupport.MTK_6752_SUPPORT) {
-            support = false;
-        }
-
-        if (ChipSupport.isChipInSet(ChipSupport.CHIP_657X_SERIES_NEW)) {
-            support = false;
-        }
-
-        if (!new File(FILE_DRAMC).exists()) {
-            support = false;
-        }
-
-        return support;
     }
 }

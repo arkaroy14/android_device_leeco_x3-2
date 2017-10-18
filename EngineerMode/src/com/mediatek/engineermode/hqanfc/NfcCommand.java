@@ -201,7 +201,6 @@ public class NfcCommand {
         public static final int MTK_EM_LOOPBACK_TEST_RSP = 130;
         public static final int MTK_NFC_SW_VERSION_QUERY = 131;  // version query
         public static final int MTK_NFC_SW_VERSION_RESPONSE = 132;
-        public static final int MTK_NFC_EM_DEACTIVATE_CMD = 135; // deactivate : 0 idle
         public static final int MTK_NFC_FM_SWP_TEST_REQ = 201;  // swp test
         public static final int MTK_NFC_FM_SWP_TEST_NTF = 202;
         public static final int MTK_NFC_FM_SWP_TEST_RSP = 203;

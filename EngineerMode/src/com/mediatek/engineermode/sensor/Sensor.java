@@ -46,7 +46,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.mediatek.engineermode.FeatureSupport;
 import com.mediatek.engineermode.R;
 
 import java.util.ArrayList;
@@ -61,10 +60,8 @@ public class Sensor extends Activity implements OnItemClickListener {
 
         ArrayList<String> items = new ArrayList<String>();
         items.add(getString(R.string.sensor_data));
-        if (!FeatureSupport.isSupported(FeatureSupport.FK_MTK_WEARABLE_PLATFORM)) {
-            items.add(getString(R.string.sensor_ps));
-        }
-        items.add("Sensors Calibration");
+        items.add(getString(R.string.sensor_calibration));
+        items.add(getString(R.string.sensor_ps));
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
         list.setAdapter(adapter);
         list.setOnItemClickListener(this);
@@ -77,11 +74,10 @@ public class Sensor extends Activity implements OnItemClickListener {
             intent.setClass(this, MSensor.class);
             this.startActivity(intent);
         } else if (1 == arg2) {
-            intent.setClass(this, PSensor.class);
-            this.startActivity(intent);
-        }
-        else if (2 == arg2) {
             intent.setClass(this, SensorCalibrationSelect.class);
+            this.startActivity(intent);
+        } else if (2 == arg2) {
+            intent.setClass(this, PSensor.class);
             this.startActivity(intent);
         }
     }

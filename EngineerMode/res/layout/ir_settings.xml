@@ -29,30 +29,6 @@
             android:layout_marginLeft="80dip"
             android:layout_marginTop="10dip"
             android:text="@string/c2k_ir_done" />
-            
-        <LinearLayout style="@style/info_layout" >
-            <TextView
-                style="@style/info_label"
-                android:id="@+id/wcdma_integrity_off"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/c2k_ir_integrity_off" />
-    
-            <Spinner
-                android:id="@+id/c2k_ir_integrity_off"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:entries="@array/c2k_ir_integrity_off" />
-    
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/ir_integrity_off_done_btn"
-            android:layout_width="100dip"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="80dip"
-            android:layout_marginTop="10dip"
-            android:text="@string/c2k_ir_done" />
     </LinearLayout>
 
 </ScrollView>

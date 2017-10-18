@@ -236,8 +236,6 @@ public class MSensorCurrentActivity extends Activity implements Callback {
         float unit_ps = (height - base) / 4.0f;
         float unit_als = (height - base) / 1088.0f;
         int font_size = 12;
-        int num;
-        int fst;
 
         if (width < mSampleMax) {
             mSampleMax = width - 10;
@@ -260,9 +258,10 @@ public class MSensorCurrentActivity extends Activity implements Callback {
             if (mAccReady && mDataReady && (mSampleNum < mSampleMax)) {
                 mSampleNum++;
             }
-            num = Math.min(width / offset, mSampleNum);
-            fst = mSampleIdx - num;
         }
+
+        int num = Math.min(width / offset, mSampleNum);
+        int fst = mSampleIdx - num;
         int pos;
 
         if (fst < 0) {

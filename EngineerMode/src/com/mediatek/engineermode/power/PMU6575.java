@@ -136,87 +136,6 @@ public class PMU6575 extends TabActivity implements OnClickListener {
             {"LDO_VMCH_VOLTAGE", mPromptUnit }, {"LDO_VRF_VOLTAGE", mPromptUnit }, {"LDO_VRTC_VOLTAGE", mPromptUnit },
             {"LDO_VSIM_VOLTAGE", mPromptUnit }, {"LDO_VSIM2_VOLTAGE", mPromptUnit }, {"LDO_VTCXO_VOLTAGE", mPromptUnit },
             {"LDO_VUSB_VOLTAGE", mPromptUnit } };
-    private String[][] mFileFor6755 = {
-            {"BUCK_VCORE_STATUS", mPromptSw },
-            {"BUCK_VGPU_STATUS", mPromptSw },
-            {"BUCK_VSRAM_PROC_STATUS", mPromptSw },
-            {"BUCK_VMODEM_STATUS", mPromptSw },
-            {"BUCK_VMD1_STATUS", mPromptSw },
-            {"BUCK_VSRAM_MD_STATUS", mPromptSw },
-            {"BUCK_VS1_STATUS", mPromptSw },
-            {"BUCK_VS2_STATUS", mPromptSw },
-            {"BUCK_VPA_STATUS", mPromptSw },
-            {"SEP", "" },
-            {"LDO_va18_STATUS", mPromptSw },
-            {"LDO_vtcxo28_STATUS", mPromptSw },
-            {"LDO_vtcxo24_STATUS", mPromptSw },
-            {"LDO_vcn28_STATUS", mPromptSw },
-            {"LDO_vcama_STATUS", mPromptSw },
-            {"LDO_vcn33_bt_STATUS", mPromptSw},
-            {"LDO_vcn33_wifi_STATUS", mPromptSw},
-            {"LDO_vusb33_STATUS", mPromptSw },
-            {"LDO_vefuse_STATUS", mPromptSw },
-            {"LDO_vsim1_STATUS", mPromptSw },
-            {"LDO_vsim2_STATUS", mPromptSw },
-            {"LDO_vemc_STATUS", mPromptSw },
-            {"LDO_vmch_STATUS", mPromptSw },
-            {"LDO_vmc_STATUS", mPromptSw },
-            {"LDO_vio28_STATUS", mPromptSw },
-            {"LDO_vldo28_STATUS", mPromptSw },
-            {"LDO_vibr_STATUS", mPromptSw },
-            {"LDO_vcamd_STATUS", mPromptSw },
-            {"LDO_vrf18_STATUS ", mPromptSw },
-            {"LDO_vio18_STATUS ", mPromptSw },
-            {"LDO_vcn18_STATUS", mPromptSw },
-            {"LDO_vcamio_STATUS", mPromptSw },
-            {"LDO_vxo22_STATUS", mPromptSw },
-            {"LDO_vrf12_STATUS", mPromptSw },
-            {"LDO_va10_STATUS", mPromptSw },
-            {"LDO_vdram_STATUS ", mPromptSw },
-            {"LDO_vmipi_STATUS ", mPromptSw },
-            {"LDO_vgp3_STATUS", mPromptSw },
-            {"LDO_vbif28_STATUS", mPromptSw },
-            {"SEP", "" },
-            {"BUCK_VCORE_VOLTAGE", mPromptUnit },
-            {"BUCK_VGPU_VOLTAGE", mPromptUnit },
-            {"BUCK_VSRAM_PROC_VOLTAGE", mPromptUnit },
-            {"BUCK_VMODEM_VOLTAGE", mPromptUnit },
-            {"BUCK_VMD1_VOLTAGE", mPromptUnit },
-            {"BUCK_VSRAM_MD_VOLTAGE", mPromptUnit },
-            {"BUCK_VS1_VOLTAGE", mPromptUnit},
-            {"BUCK_VS2_VOLTAGE", mPromptUnit },
-            {"BUCK_VPA_VOLTAGE", mPromptUnit },
-            {"SEP", "" },
-            {"LDO_va18_VOLTAGE", mPromptUnit },
-            {"LDO_vtcxo28_VOLTAGE", mPromptUnit },
-            {"LDO_vtcxo24_VOLTAGE", mPromptUnit },
-            {"LDO_vcn28_VOLTAGE", mPromptUnit },
-            {"LDO_vcama_VOLTAGE",  mPromptUnit },
-            {"LDO_vcn33_bt_VOLTAGE", mPromptUnit },
-            {"LDO_vcn33_wifi_VOLTAGE", mPromptUnit },
-            {"LDO_vusb33_VOLTAGE", mPromptUnit },
-            {"LDO_vefuse_VOLTAGE", mPromptUnit },
-            {"LDO_vsim1_VOLTAGE", mPromptUnit },
-            {"LDO_vsim2_VOLTAGE", mPromptUnit },
-            {"LDO_vemc_VOLTAGE", mPromptUnit },
-            {"LDO_vmch_VOLTAGE", mPromptUnit },
-            {"LDO_vmc_VOLTAGE", mPromptUnit },
-            {"LDO_vio28_VOLTAGE", mPromptUnit },
-            {"LDO_vldo28_VOLTAGE", mPromptUnit },
-            {"LDO_vibr_VOLTAGE", mPromptUnit },
-            {"LDO_vcamd_VOLTAGE", mPromptUnit },
-            {"LDO_vrf18_VOLTAGE", mPromptUnit },
-            {"LDO_vio18_VOLTAGE", mPromptUnit },
-            {"LDO_vcn18_VOLTAGE", mPromptUnit},
-            {"LDO_vcamio_VOLTAGE", mPromptUnit },
-            {"LDO_vxo22_VOLTAGE", mPromptUnit},
-            {"LDO_vrf12_VOLTAGE", mPromptUnit },
-            {"LDO_va10_VOLTAGE", mPromptUnit },
-            {"LDO_vdram_VOLTAGE", mPromptUnit },
-            {"LDO_vmipi_VOLTAGE", mPromptUnit },
-            {"LDO_vgp3_VOLTAGE", mPromptUnit },
-            {"LDO_vbif28_VOLTAGE", mPromptUnit },
-    };
     private String[][] mFilesFor89 = {
             {"BUCK_VPROC_STATUS", mPromptSw },
             {"BUCK_VSRAM_STATUS", mPromptSw },
@@ -585,66 +504,6 @@ public class PMU6575 extends TabActivity implements OnClickListener {
             {"LDO_VTCXO_1_VOLTAGE", mPromptUnit},
             {"LDO_VUSB33_VOLTAGE", mPromptUnit},
     };
-    private String[][] mFileFor80 = {
-                {"BUCK_VPA_STATUS", mPromptSw},
-                {"BUCK_VPROC_STATUS", mPromptSw},
-                {"SEP", ""},
-                {"LDO_VCN28_STATUS", mPromptSw},
-                {"LDO_VTCXO_STATUS", mPromptSw},
-                {"LDO_VA_STATUS", mPromptSw},
-                {"LDO_VCAMA_STATUS", mPromptSw},
-                {"LDO_VCN33_BT_STATUS", mPromptSw},
-                {"LDO_VCN33_WIFI_STATUS", mPromptSw},
-                {"LDO_VIO28_STATUS", mPromptSw},
-                {"LDO_VSIM1_STATUS", mPromptSw},
-                {"LDO_VSIM2_STATUS", mPromptSw},
-                {"LDO_VUSB_STATUS", mPromptSw},
-                {"LDO_VGP1_STATUS", mPromptSw},
-                {"LDO_VGP2_STATUS", mPromptSw},
-                {"LDO_VEMC_3V3_STATUS", mPromptSw},
-                {"LDO_VCAMAF_STATUS", mPromptSw},
-                {"LDO_VMC_STATUS", mPromptSw},
-                {"LDO_VMCH_STATUS", mPromptSw},
-                {"LDO_VIBR_STATUS", mPromptSw},
-                {"LDO_VRTC_STATUS", mPromptSw},
-                {"LDO_VM_STATUS", mPromptSw},
-                {"LDO_VRF18_STATUS", mPromptSw},
-                {"LDO_VIO18_STATUS", mPromptSw},
-                {"LDO_VCAMD_STATUS", mPromptSw},
-                {"LDO_VCAMIO_STATUS", mPromptSw},
-                {"LDO_VGP3_STATUS", mPromptSw},
-                {"LDO_VCN_1V8_STATUS", mPromptSw},
-                {"SEP", ""},
-                {"BUCK_VPA_VOLTAGE", mPromptUv},
-                {"BUCK_VPROC_VOLTAGE", mPromptUv},
-                {"SEP", ""},
-                {"LDO_VCN28_VOLTAGE", mPromptUnit},
-                {"LDO_VTCXO_VOLTAGE", mPromptUnit},
-                {"LDO_VA_VOLTAGE", mPromptUnit},
-                {"LDO_VCAMA_VOLTAGE", mPromptUnit},
-                {"LDO_VCN33_BT_VOLTAGE", mPromptUnit},
-                {"LDO_VCN33_WIFI_VOLTAGE", mPromptUnit},
-                {"LDO_VIO28_VOLTAGE", mPromptUnit},
-                {"LDO_VSIM1_VOLTAGE", mPromptUnit},
-                {"LDO_VSIM2_VOLTAGE", mPromptUnit},
-                {"LDO_VUSB_VOLTAGE", mPromptUnit},
-                {"LDO_VGP1_VOLTAGE", mPromptUnit},
-                {"LDO_VGP2_VOLTAGE", mPromptUnit},
-                {"LDO_VEMC_3V3_VOLTAGE", mPromptUnit},
-                {"LDO_VCAMAF_VOLTAGE", mPromptUnit},
-                {"LDO_VMC_VOLTAGE", mPromptUnit},
-                {"LDO_VMCH_VOLTAGE", mPromptUnit},
-                {"LDO_VIBR_VOLTAGE", mPromptUnit},
-                {"LDO_VRTC_VOLTAGE", mPromptUnit},
-                {"LDO_VM_VOLTAGE", mPromptUnit},
-                {"LDO_VRF18_VOLTAGE", mPromptUnit},
-                {"LDO_VIO18_VOLTAGE", mPromptUnit},
-                {"LDO_VCAMD_VOLTAGE", mPromptUnit},
-                {"LDO_VCAMIO_VOLTAGE", mPromptUnit},
-                {"LDO_VGP3_VOLTAGE", mPromptUnit},
-                {"LDO_VCN_1V8_VOLTAGE", mPromptUnit},
-        };
-
     // private int mUpdateInterval = 1500; // 1.5 sec
     private Handler mUpdateHandler = new Handler() {
         @Override
@@ -677,7 +536,7 @@ public class PMU6575 extends TabActivity implements OnClickListener {
         if (mInfo == null || mBtnGetRegister == null || mBtnSetRegister == null || mEditAddr == null || mEditVal == null
                 || mBankSpinner == null) {
             Elog.e("PMU", "clocwork worked...");
-            return;
+            // not return and let exception happened.
         }
 
         mBtnGetRegister.setOnClickListener(this);
@@ -952,15 +811,6 @@ public class PMU6575 extends TabActivity implements OnClickListener {
                     if (ChipSupport.isCurrentChipEquals(ChipSupport.MTK_6735_SUPPORT)) {
                         fileArray = mFileFor35;
                     }
-                    if (ChipSupport.isCurrentChipEquals(ChipSupport.MTK_6580_SUPPORT)) {
-                        fileArray = mFileFor80;
-                    }
-
-                    if (ChipSupport.isCurrentChipEquals(ChipSupport.MTK_6755_SUPPORT)
-                            || ChipSupport.isCurrentChipEquals(ChipSupport.MTK_6797_SUPPORT)) {
-                        fileArray = mFileFor6755;
-                    }
-
                 } else {
                     fileArray = mFiles;
                 }

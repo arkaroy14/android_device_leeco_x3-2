@@ -244,10 +244,10 @@ public class GPRS extends Activity implements OnClickListener {
                 public void onCheckedChanged(RadioGroup arg0, int arg1) {
                     if (arg0.getCheckedRadioButtonId() == R.id.SIM1Enabled) {
                         SubscriptionManager.from(mContext).setDefaultDataSubId(SubscriptionManager
-                                .getSubId(PhoneConstants.SIM_ID_1)[0]);
+                                .getSubIdUsingSlotId(PhoneConstants.SIM_ID_1)[0]);
                     } else if (arg0.getCheckedRadioButtonId() == R.id.SIM2Enabled) {
                         SubscriptionManager.from(mContext).setDefaultDataSubId(SubscriptionManager
-                                .getSubId(PhoneConstants.SIM_ID_2)[0]);
+                                .getSubIdUsingSlotId(PhoneConstants.SIM_ID_2)[0]);
                     }
                     rebootAlert();
                 }
@@ -307,21 +307,27 @@ public class GPRS extends Activity implements OnClickListener {
         mGprstAttachSelect
                 .setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                     public void onCheckedChanged(RadioGroup arg0, int arg1) {
-                        Log.v(LOG_TAG, "onCheckedChanged:GprsAlwaysAttach");
                         // TODO Auto-generated method stub
                         if (arg0.getCheckedRadioButtonId() == R.id.GprsAlwaysAttach) {
 
-                            SystemProperties.set("persist.radio.gprs.attach.type", "1");
+                            SystemProperties.set(
+                                    "persist.radio.gprs.attach.type", "1");
                             String cmdStr[] = { "AT+EGTYPE=1", "" };
-                            mPhone.invokeOemRilRequestStrings(cmdStr,
-                                mResponseHander.obtainMessage(EVENT_GPRS_ATTACH_TYPE));
+                            mPhone
+                                    .invokeOemRilRequestStrings(
+                                            cmdStr,
+                                            mResponseHander
+                                                    .obtainMessage(EVENT_GPRS_ATTACH_TYPE));
                         }
                         if (arg0.getCheckedRadioButtonId() == R.id.GprsWhenNeeded) {
-                            Log.v(LOG_TAG, "onCheckedChanged:GprsWhenNeeded");
-                            SystemProperties.set("persist.radio.gprs.attach.type", "0");
+                            SystemProperties.set(
+                                    "persist.radio.gprs.attach.type", "0");
                             String cmdStr[] = { "AT+EGTYPE=0", "" };
-                            mPhone.invokeOemRilRequestStrings(cmdStr,
-                                mResponseHander.obtainMessage(EVENT_GPRS_ATTACH_TYPE));
+                            mPhone
+                                    .invokeOemRilRequestStrings(
+                                            cmdStr,
+                                            mResponseHander
+                                                    .obtainMessage(EVENT_GPRS_ATTACH_TYPE));
                         }
                     }
                 });
@@ -417,14 +423,13 @@ public class GPRS extends Activity implements OnClickListener {
 
         if (arg0 == mBtnSim1) {
             if (MTK_GEMINI_SUPPORT) {
-                Log.v(LOG_TAG, "onClick:Phone1 subId = " + SubscriptionManager.getSubId(
-                    PhoneConstants.SIM_ID_1)[0]);
+                Log.v(LOG_TAG, "mContext = " + mContext);
                 SubscriptionManager.from(mContext).setDefaultDataSubId(SubscriptionManager
-                                .getSubId(PhoneConstants.SIM_ID_1)[0]);
+                                .getSubIdUsingSlotId(PhoneConstants.SIM_ID_1)[0]);
             }
 
             mPhone = PhoneFactory.getPhone(getDefaultDataPhoneId());
-            Log.v(LOG_TAG, "onClick:SIM 1");
+            Log.v(LOG_TAG, "SIM 1");
             showDefaultSim();
             String imei = mPhone.getDeviceId();
             mEditImeiValue.setText(imei);
@@ -432,12 +437,10 @@ public class GPRS extends Activity implements OnClickListener {
         }
 
         if (arg0 == mBtnSim2) {
-            Log.v(LOG_TAG, "onClick:Phone2 subId = " + SubscriptionManager.getSubId(
-                PhoneConstants.SIM_ID_2)[0]);
             SubscriptionManager.from(mContext).setDefaultDataSubId(SubscriptionManager
-                                .getSubId(PhoneConstants.SIM_ID_2)[0]);
+                                .getSubIdUsingSlotId(PhoneConstants.SIM_ID_2)[0]);
             mPhone = PhoneFactory.getPhone(getDefaultDataPhoneId());
-            Log.v(LOG_TAG, "onClick:SIM 2");
+            Log.v(LOG_TAG, "SIM 2");
             showDefaultSim();
             String imei = mPhone.getDeviceId();
             mEditImeiValue.setText(imei);
@@ -460,7 +463,6 @@ public class GPRS extends Activity implements OnClickListener {
         SharedPreferences.Editor editor = preference.edit();
 
         if (arg0 == mBtnAttachedContinue) {
-            Log.v(LOG_TAG, "onClick:mBtnAttachedContinue");
             SystemProperties.set("persist.radio.gprs.attach.type", "1");
             String cmdStr[] = { "AT+EGTYPE=1,1", "" };
             mPhone.invokeOemRilRequestStrings(cmdStr, mResponseHander
@@ -468,7 +470,6 @@ public class GPRS extends Activity implements OnClickListener {
 
             editor.putInt(PREF_ATTACH_MODE, ATTACH_MODE_ALWAYS);
         } else if (arg0 == mBtnDetachedContinue) {
-            Log.v(LOG_TAG, "onClick:mBtnDetachedContinue");
             SystemProperties.set("persist.radio.gprs.attach.type", "0");
             String cmdStr[] = { "AT+EGTYPE=0,1", "" };
             mPhone.invokeOemRilRequestStrings(cmdStr, mResponseHander
@@ -690,7 +691,8 @@ public class GPRS extends Activity implements OnClickListener {
     };
 
     private void showDefaultSim() {
-        int simId = getDefaultDataPhoneId();
+        mPhone = PhoneFactory.getDefaultPhone();
+        int simId = SubscriptionManager.getSlotId(mPhone.getSubId());
         Log.v(LOG_TAG, "showDefaultSim: simId = " + simId);
 
         if (MTK_GEMINI_SUPPORT) {

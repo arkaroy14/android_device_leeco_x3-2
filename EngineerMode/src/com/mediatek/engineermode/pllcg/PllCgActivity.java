@@ -44,7 +44,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -53,6 +52,7 @@ import android.widget.Toast;
 
 import com.mediatek.engineermode.R;
 import com.mediatek.engineermode.ShellExe;
+import com.mediatek.xlog.Xlog;
 
 public class PllCgActivity extends Activity implements OnClickListener {
     private static final String TAG = "PllCg";
@@ -113,7 +113,7 @@ public class PllCgActivity extends Activity implements OnClickListener {
             showDialog(getString(R.string.pllcg_all_info), output.toString());
             break;
         default:
-            Log.w("@M_" + TAG, "Unknown view id: " + view.getId());
+            Xlog.w(TAG, "Unknown view id: " + view.getId());
             break;
         }
     }
@@ -159,15 +159,15 @@ public class PllCgActivity extends Activity implements OnClickListener {
 
     private String execCommand(String cmd) {
          int ret = -1;
-         Log.d("@M_" + TAG, "[cmd]:" + cmd);
+         Xlog.d(TAG, "[cmd]:" + cmd);
          try {
              ret = ShellExe.execCommand(cmd);
          } catch (IOException e) {
-             Log.e("@M_" + TAG, "IOException: " + e.getMessage());
+             Xlog.e(TAG, "IOException: " + e.getMessage());
          }
          if (ret == 0) {
              String outStr = ShellExe.getOutput();
-             Log.d("@M_" + TAG, "[output]: " + outStr);
+             Xlog.d(TAG, "[output]: " + outStr);
              return outStr;
          }
          return null;

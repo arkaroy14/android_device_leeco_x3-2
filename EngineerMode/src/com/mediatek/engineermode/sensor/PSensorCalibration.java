@@ -46,7 +46,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -54,6 +53,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mediatek.engineermode.R;
+import com.mediatek.xlog.Xlog;
 
 import java.util.Locale;
 
@@ -135,14 +135,14 @@ public class PSensorCalibration extends Activity implements OnClickListener {
             public void handleMessage(Message msg) {
                 switch (msg.what) {
                 case MSG_CALCULATE_SUCCESS:
-                    Log.d("@M_" + TAG, "set success");
+                    Xlog.d(TAG, "set success");
                     enableButtons(true);
                     mMinValue.setText(String.valueOf(mMin));
                     mMaxValue.setText(String.valueOf(mMax));
                     showToast("Calculate succeed");
                     break;
                 case MSG_CALCULATE_FAILURE:
-                    Log.d("@M_" + TAG, "set fail");
+                    Xlog.d(TAG, "set fail");
                     enableButtons(true);
                     showToast("Calculate failed");
                     break;
@@ -155,30 +155,30 @@ public class PSensorCalibration extends Activity implements OnClickListener {
                     mMaxValue.setText(String.valueOf(mMax));
                     break;
                 case MSG_GET_DATA_FAILURE:
-                    Log.d("@M_" + TAG, "get fail");
+                    Xlog.d(TAG, "get fail");
                     enableButtons(true);
                     showToast("Get PS data failed");
                     break;
                 case MSG_CALIBRARION_FAILURE:
-                    Log.d("@M_" + TAG, "cali fail");
+                    Xlog.d(TAG, "cali fail");
                     enableButtons(true);
                     showToast("Calibration failed");
                     mResult.setText("FAIL");
                     break;
                 case MSG_CALIBRARION_SUCCESS:
-                    Log.d("@M_" + TAG, "cali success");
+                    Xlog.d(TAG, "cali success");
                     enableButtons(true);
                     showToast("Calibration succeed");
                     mResult.setText("PASS");
                     break;
                 case MSG_CLEAR_FAILURE:
-                    Log.d("@M_" + TAG, "clear fail");
+                    Xlog.d(TAG, "clear fail");
                     enableButtons(true);
                     showToast("Clear failed");
                     mResult.setText("");
                     break;
                 case MSG_CLEAR_SUCCESS:
-                    Log.d("@M_" + TAG, "clear success");
+                    Xlog.d(TAG, "clear success");
                     enableButtons(true);
                     showToast("Clear succeed");
                     mResult.setText("");
@@ -199,7 +199,7 @@ public class PSensorCalibration extends Activity implements OnClickListener {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("@M_" + TAG, "onResume()");
+        Xlog.d(TAG, "onResume()");
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         mSensorManager.registerListener(mSensorEventListener, mSensor, SensorManager.SENSOR_DELAY_UI);
@@ -209,7 +209,7 @@ public class PSensorCalibration extends Activity implements OnClickListener {
 
     @Override
     protected void onPause() {
-        Log.d("@M_" + TAG, "onPause()");
+        Xlog.d(TAG, "onPause()");
         mSensorManager.unregisterListener(mSensorEventListener);
         mSensorManager = null;
 
@@ -220,35 +220,35 @@ public class PSensorCalibration extends Activity implements OnClickListener {
     @Override
     public void onClick(View arg0) {
         if (arg0.getId() == mGetMin.getId()) {
-            Log.d("@M_" + TAG, "get min");
+            Xlog.d(TAG, "get min");
             mHandler.sendEmptyMessage(MSG_CALCULATE_MIN_VALUE);
         } else if (arg0.getId() == mGetMax.getId()) {
-            Log.d("@M_" + TAG, "get max");
+            Xlog.d(TAG, "get max");
             mHandler.sendEmptyMessage(MSG_CALCULATE_MAX_VALUE);
         } else if (arg0.getId() == mDoCalibration.getId()) {
-            Log.d("@M_" + TAG, "do calibration");
+            Xlog.d(TAG, "do calibration");
             mHandler.sendEmptyMessage(MSG_DO_CALIBRARION);
         } else if (arg0.getId() == mClearCalibration.getId()) {
-            Log.d("@M_" + TAG, "clear calibration");
+            Xlog.d(TAG, "clear calibration");
             mHandler.sendEmptyMessage(MSG_CLEAR_CALIBRARION);
         }
         enableButtons(false);
     }
 
     private void getCurrentData() {
-        Log.d("@M_" + TAG, "getCurrentData()");
+        Xlog.d(TAG, "getCurrentData()");
         mData = EmSensor.getPsensorData();
-        Log.d("@M_" + TAG, String.format("getPsensorData(), ret %d", mData));
+        Xlog.d(TAG, String.format("getPsensorData(), ret %d", mData));
 
         mMin = EmSensor.getPsensorMinValue();
-        Log.d("@M_" + TAG, String.format("getPsensorMinValue(), ret %d", mMin));
+        Xlog.d(TAG, String.format("getPsensorMinValue(), ret %d", mMin));
 
         mMax = EmSensor.getPsensorMaxValue();
-        Log.d("@M_" + TAG, String.format("getPsensorMaxValue(), ret %d", mMax));
+        Xlog.d(TAG, String.format("getPsensorMaxValue(), ret %d", mMax));
 
         int[] result = new int[2];
         EmSensor.getPsensorThreshold(result);
-        Log.d("@M_" + TAG, String.format("getPsensorThreshold(), ret %d, %d", result[0], result[1]));
+        Xlog.d(TAG, String.format("getPsensorThreshold(), ret %d, %d", result[0], result[1]));
         mHigh = result[0];
         mLow = result[1];
 
@@ -258,7 +258,7 @@ public class PSensorCalibration extends Activity implements OnClickListener {
     private void calibration(int what) {
         int result = 0;
         if (what != MSG_UPDATE_DATA) {
-            Log.d("@M_" + TAG, String.format("calibration(), operation %d", what));
+            Xlog.d(TAG, String.format("calibration(), operation %d", what));
         }
 
         switch (what) {
@@ -293,7 +293,7 @@ public class PSensorCalibration extends Activity implements OnClickListener {
             result = EmSensor.calculatePsensorMinValue();
             if (result == EmSensor.RET_SUCCESS) {
                 mMin = EmSensor.getPsensorMinValue();
-                Log.d("@M_" + TAG, String.format("getPsensorMinValue(), ret %d", mMin));
+                Xlog.d(TAG, String.format("getPsensorMinValue(), ret %d", mMin));
                 mUiHandler.sendEmptyMessage(MSG_CALCULATE_SUCCESS);
             } else {
                 mUiHandler.sendEmptyMessage(MSG_CALCULATE_FAILURE);
@@ -303,7 +303,7 @@ public class PSensorCalibration extends Activity implements OnClickListener {
             result = EmSensor.calculatePsensorMaxValue();
             if (result == EmSensor.RET_SUCCESS) {
                 mMax = EmSensor.getPsensorMaxValue();
-                Log.d("@M_" + TAG, String.format("getPsensorMaxValue(), ret %d", mMax));
+                Xlog.d(TAG, String.format("getPsensorMaxValue(), ret %d", mMax));
                 mUiHandler.sendEmptyMessage(MSG_CALCULATE_SUCCESS);
             } else {
                 mUiHandler.sendEmptyMessage(MSG_CALCULATE_FAILURE);
@@ -313,7 +313,7 @@ public class PSensorCalibration extends Activity implements OnClickListener {
             break;
         }
         if (what != MSG_UPDATE_DATA) {
-            Log.d("@M_" + TAG, String.format("calibration(), ret %d", result));
+            Xlog.d(TAG, String.format("calibration(), ret %d", result));
         }
     }
 

@@ -53,65 +53,45 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-
 /**
  * USB PHY Tuning Activity.
- *
  * @author mtk81238
  *
  */
-public class UsbPhyTuning extends Activity implements android.view.View.OnClickListener {
-    /**
-     * action data.
-     *
-     * @author mtk81238
-     *
-     */
-    private class ActionData {
-        public Spinner spinner;
-        public String[] spinnerItems;
-        public Button button;
-        public String type;
-        public String path;
-
-        public ActionData(String actionType, String actionPath, Spinner sp,
-                String[] spItems, Button btn) {
-            spinner = sp;
-            spinnerItems = spItems;
-            button = btn;
-            type = actionType;
-            path = actionPath;
-        }
-    }
+public class UsbPhyTuning extends Activity
+        implements android.view.View.OnClickListener {
 
     private static final String TAG = "EM/UsbPhyTuning";
-    private static final String TYPE_USB_DRIVING_CAPABILITY = "USB_DRIVING_CAPABILITY";
+    private static final String TYPE_USB_TERM_VREF_SEL = "RG_USB20_TERM_VREF_SEL";
     private static final String TYPE_USB_HSTX_SRCTRL = "RG_USB20_HSTX_SRCTRL";
+    private static final String TYPE_USB_VRT_VREF_SEL = "RG_USB20_VRT_VREF_SEL";
     private static final String TYPE_USB_INTR_EN = "RG_USB20_INTR_EN";
-    private static final String PATH_USB_PHY = "/sys/kernel/debug/usb20_phy";
-    private static final String PATH_USB_DRIVING_CAPABILITY = PATH_USB_PHY + "/"
-            + TYPE_USB_DRIVING_CAPABILITY;
-    private static final String PATH_USB_HSTX_SRCTRLL = PATH_USB_PHY + "/"
-            + TYPE_USB_HSTX_SRCTRL;
-    private static final String PATH_USB_INTR_EN = PATH_USB_PHY + "/" + TYPE_USB_INTR_EN;
+    private static final String PATH_USB_PHY
+            = "/sys/kernel/debug/usb20_phy";
+    private static final String PATH_USB_TERM_VREF_SEL
+            = PATH_USB_PHY + "/" + TYPE_USB_TERM_VREF_SEL;
+    private static final String PATH_USB_HSTX_SRCTRLL
+            = PATH_USB_PHY + "/" + TYPE_USB_HSTX_SRCTRL;
+    private static final String PATH_USB_VRT_VREF_SEL
+            = PATH_USB_PHY + "/" + TYPE_USB_VRT_VREF_SEL;
+    private static final String PATH_USB_INTR_EN
+            = PATH_USB_PHY + "/" + TYPE_USB_INTR_EN;
     private static final String KEY_EM_USB_VAL = "mediatek.em.usb.value";
     private static final String KEY_EM_USB_TYPE = "mediatek.em.usb.set";
     private static final int MSG_CHECK_SUBMIT_OPERATION = 10;
-    private Spinner mSpDrivingCapability = null;
+    private Spinner mSpTermVrefSel = null;
     private Spinner mSpHstxSrctrl = null;
+    private Spinner mSpVrtVrefSel = null;
     private Spinner mSpIntrEn = null;
-    private Button mBtnDrivingCapability = null;
+    private Button mBtnTermVrefSel = null;
     private Button mBtnHstxSrctrl = null;
+    private Button mBtnVrtVrefSel = null;
     private Button mBtnIntrEn = null;
     private String[] mArrBValStr07 = null;
     private String[] mArrDValStr01 = null;
-    private String[] mArrDValStr014 = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
-            "10", "11", "12", "13", "14" };
-    private ActionData[] mActionData = null;
 
     /**
      * tell whether usb phy path exist.
-     *
      * @return if existed, return true, or false
      */
     public static boolean isUsbPhyExist() {
@@ -134,16 +114,14 @@ public class UsbPhyTuning extends Activity implements android.view.View.OnClickL
     };
 
     private void handleCheckMsg(Message msg) {
-        ActionData actionData = (ActionData) msg.obj;
-        boolean ret = checkSubmitResult(actionData);
+        Button btn = (Button) msg.obj;
+        boolean ret = checkSubmitResult(btn);
         if (ret) {
-            Toast.makeText(this, actionData.type + " execute success", Toast.LENGTH_SHORT)
-                    .show();
+            Toast.makeText(this, "Execute success", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, actionData.type + " execute fail", Toast.LENGTH_SHORT)
-                    .show();
+            Toast.makeText(this, "Execute fail", Toast.LENGTH_SHORT).show();
         }
-        actionData.button.setEnabled(true);
+        btn.setEnabled(true);
     }
 
     @Override
@@ -152,53 +130,42 @@ public class UsbPhyTuning extends Activity implements android.view.View.OnClickL
         setContentView(R.layout.usb_phy_tuning);
         mArrBValStr07 = getResources().getStringArray(R.array.usb_phy_tuning_val_0_7b);
         mArrDValStr01 = getResources().getStringArray(R.array.usb_phy_tuning_val_0_1d);
-        mSpDrivingCapability = (Spinner) findViewById(R.id.usb_phy_driving_capability_sp);
+        mSpTermVrefSel = (Spinner) findViewById(R.id.usb_phy_term_vref_sel_sp);
+        fillSelectSpinner(mSpTermVrefSel, mArrBValStr07, PATH_USB_TERM_VREF_SEL);
         mSpHstxSrctrl = (Spinner) findViewById(R.id.usb_phy_hstx_srctrl_sp);
+        fillSelectSpinner(mSpHstxSrctrl, mArrBValStr07, PATH_USB_HSTX_SRCTRLL);
+        mSpVrtVrefSel = (Spinner) findViewById(R.id.usb_phy_vrt_vref_sel_sp);
+        fillSelectSpinner(mSpVrtVrefSel, mArrBValStr07, PATH_USB_VRT_VREF_SEL);
         mSpIntrEn = (Spinner) findViewById(R.id.usb_phy_intr_en_sp);
+        fillSelectSpinner(mSpIntrEn, mArrDValStr01, PATH_USB_INTR_EN);
 
-        mBtnDrivingCapability = (Button) findViewById(R.id.usb_phy_driving_capability_btn);
-        mBtnDrivingCapability.setOnClickListener(this);
+        mBtnTermVrefSel = (Button) findViewById(R.id.usb_phy_term_vref_sel_btn);
+        mBtnTermVrefSel.setOnClickListener(this);
         mBtnHstxSrctrl = (Button) findViewById(R.id.usb_phy_hstx_srctrl_btn);
         mBtnHstxSrctrl.setOnClickListener(this);
+        mBtnVrtVrefSel = (Button) findViewById(R.id.usb_phy_vrt_vref_sel_btn);
+        mBtnVrtVrefSel.setOnClickListener(this);
         mBtnIntrEn = (Button) findViewById(R.id.usb_phy_intr_en_btn);
         mBtnIntrEn.setOnClickListener(this);
-
-        mActionData = new ActionData[3];
-        mActionData[0] = new ActionData(TYPE_USB_DRIVING_CAPABILITY,
-                PATH_USB_DRIVING_CAPABILITY, mSpDrivingCapability, mArrDValStr014,
-                mBtnDrivingCapability);
-        mActionData[1] = new ActionData(TYPE_USB_HSTX_SRCTRL, PATH_USB_HSTX_SRCTRLL,
-                mSpHstxSrctrl, mArrBValStr07, mBtnHstxSrctrl);
-        mActionData[2] = new ActionData(TYPE_USB_INTR_EN, PATH_USB_INTR_EN, mSpIntrEn,
-                mArrDValStr01, mBtnIntrEn);
-        for (int i = 0; i < mActionData.length; i++) {
-            fillSelectSpinner(mActionData[i]);
-        }
     }
 
     private void fillSpinnerItems(Spinner spinner, String[] itemArr) {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, itemArr);
+                android.R.layout.simple_spinner_item,
+                itemArr);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
     }
 
-    private void fillSelectSpinner(ActionData actionData) {
-        Spinner spinner = actionData.spinner;
-        String[] spItems = actionData.spinnerItems;
-        String path = actionData.path;
-        fillSpinnerItems(spinner, spItems);
+    private void fillSelectSpinner(Spinner spinner, String[] itemArr, String path) {
+        fillSpinnerItems(spinner, itemArr);
         String content = readFileContent(path);
         if (content != null) {
             content = content.trim();
         }
-        int index = getIdxInStrArr(spItems, content);
+        int index = getIdxInStrArr(itemArr, content);
         if (index >= 0) {
             spinner.setSelection(index);
-        } else {
-            Toast.makeText(this,
-                    "unknown value " + content + ", when read " + actionData.type,
-                    Toast.LENGTH_LONG).show();
         }
     }
 
@@ -211,14 +178,11 @@ public class UsbPhyTuning extends Activity implements android.view.View.OnClickL
             while (true) {
                 int ret = reader.read(buffer, 0, buffer.length);
                 if (ret <= 0) {
-                    reader.close();
                     break;
                 }
                 builder.append(buffer, 0, ret);
             }
-
         } catch (IOException e) {
-            builder.append("Error:").append(e.getMessage());
             Elog.e(TAG, "readFileContent IOException:" + e.getMessage());
         }
         return builder.toString();
@@ -236,42 +200,61 @@ public class UsbPhyTuning extends Activity implements android.view.View.OnClickL
     }
 
     private void onClickButton(Button button) {
-        ActionData actionData = null;
-        for (int i = 0; i < mActionData.length; i++) {
-            if (button == mActionData[i].button) {
-                actionData = mActionData[i];
-                break;
-            }
+        String type = null;
+        String value = null;
+        if (button == mBtnTermVrefSel) {
+            type = TYPE_USB_TERM_VREF_SEL;
+            value = mSpTermVrefSel.getSelectedItem().toString();
+        } else if (button == mBtnHstxSrctrl) {
+            type = TYPE_USB_HSTX_SRCTRL;
+            value = mSpHstxSrctrl.getSelectedItem().toString();
+        } else if (button == mBtnVrtVrefSel) {
+            type = TYPE_USB_VRT_VREF_SEL;
+            value = mSpVrtVrefSel.getSelectedItem().toString();
+        } else if (button == mBtnIntrEn) {
+            type = TYPE_USB_INTR_EN;
+            value = mSpIntrEn.getSelectedItem().toString();
+        } else {
+            Elog.d(TAG, "Unhandled button click:" + button);
         }
-        if (actionData == null) {
-            Elog.e(TAG, "onClickButton Invalid actionData: null");
-            return;
+        if (type != null && value != null) {
+            submitSetting(button, type, value);
         }
-        submitSetting(actionData);
     }
 
-    private void submitSetting(ActionData actionData) {
-        Button btn = actionData.button;
-        String type = actionData.type;
-        String value = actionData.spinner.getSelectedItem().toString();
+    private void submitSetting(Button btn, String type, String value) {
         btn.setEnabled(false);
         SystemProperties.set(KEY_EM_USB_VAL, value);
         SystemProperties.set(KEY_EM_USB_TYPE, type);
         Message msg = Message.obtain();
         msg.what = MSG_CHECK_SUBMIT_OPERATION;
-        msg.obj = actionData;
+        msg.obj = btn;
         mMainHandler.sendMessageDelayed(msg, 100);
     }
 
-    private boolean checkSubmitResult(ActionData actionData) {
+    private boolean checkSubmitResult(Button button) {
         boolean result = false;
         Spinner spinner = null;
         String path = null;
         String[] array = null;
-        if (actionData != null) {
-            spinner = actionData.spinner;
-            path = actionData.path;
-            array = actionData.spinnerItems;
+        if (button == mBtnTermVrefSel) {
+            path = PATH_USB_TERM_VREF_SEL;
+            spinner = mSpTermVrefSel;
+            array = mArrBValStr07;
+        } else if (button == mBtnHstxSrctrl) {
+            path = PATH_USB_HSTX_SRCTRLL;
+            spinner = mSpHstxSrctrl;
+            array = mArrBValStr07;
+        } else if (button == mBtnVrtVrefSel) {
+            path = PATH_USB_VRT_VREF_SEL;
+            spinner = mSpVrtVrefSel;
+            array = mArrBValStr07;
+        } else if (button == mBtnIntrEn) {
+            path = PATH_USB_INTR_EN;
+            spinner = mSpIntrEn;
+            array = mArrDValStr01;
+        } else {
+            Elog.d(TAG, "checkSubmitResult Unknown button" + button);
         }
         if (spinner != null && path != null && array != null) {
             String content = readFileContent(path);
@@ -282,8 +265,6 @@ public class UsbPhyTuning extends Activity implements android.view.View.OnClickL
             if (selectVal.equals(content)) {
                 result = true;
             } else {
-                Elog.d(TAG, "submit fail, submited value:" + selectVal + ", read value:"
-                        + content);
                 // execute fail, reset spinner consistent with system value
                 int index = getIdxInStrArr(array, content);
                 if (index >= 0) {

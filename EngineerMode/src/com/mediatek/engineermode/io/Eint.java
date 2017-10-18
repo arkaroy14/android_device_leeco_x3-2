@@ -38,7 +38,6 @@ package com.mediatek.engineermode.io;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -48,6 +47,7 @@ import android.widget.Toast;
 
 import com.mediatek.engineermode.R;
 import com.mediatek.engineermode.ShellExe;
+import com.mediatek.xlog.Xlog;
 
 import java.io.IOException;
 
@@ -85,7 +85,7 @@ public class Eint extends Activity implements OnClickListener {
     }
 
     public void onClick(View arg0) {
-        Log.v("@M_" + TAG, "-->onClick");
+        Xlog.v(TAG, "-->onClick");
         try {
             if (arg0.getId() == mBtnQuery.getId()) {
                 String editString = mEdit.getText().toString();
@@ -148,7 +148,7 @@ public class Eint extends Activity implements OnClickListener {
             }
 
         } catch (IOException e) {
-            Log.i("@M_" + TAG, e.toString());
+            Xlog.i(TAG, e.toString());
             showDialog("Shell Exception!", e.toString());
         }
     }

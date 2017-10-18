@@ -38,7 +38,6 @@ package com.mediatek.engineermode.touchscreen;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -47,6 +46,7 @@ import android.widget.ListView;
 
 
 import com.mediatek.engineermode.R;
+import com.mediatek.xlog.Xlog;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -68,7 +68,7 @@ public class TouchScreenList extends Activity implements OnItemClickListener {
 
         ListView listView = (ListView) findViewById(R.id.ListView_TouchScreen);
 //        if (listView == null) {
-//            Log.w("@M_" + TAG, "clocwork worked...");
+//            Xlog.w(TAG, "clocwork worked...");
 //            // not return and let exception happened.
 //        }
 
@@ -87,7 +87,7 @@ public class TouchScreenList extends Activity implements OnItemClickListener {
                     "cat /sys/module/tpd_setting/parameters/tpd_type_cap" };
             int ret = TouchScreenShellExe.execCommand(cmd);
             if (0 == ret) {
-                Log.i("@M_" + TAG, TouchScreenShellExe.getOutput());
+                Xlog.i(TAG, TouchScreenShellExe.getOutput());
                 if (TouchScreenShellExe.getOutput().equalsIgnoreCase("1")) {
                     // items.add("MultiTouch");
                     items.add(getString(R.string.TouchScreen_MultiTouch));
@@ -95,7 +95,7 @@ public class TouchScreenList extends Activity implements OnItemClickListener {
             }
 
         } catch (IOException e) {
-            Log.i("@M_" + TAG, e.toString());
+            Xlog.i(TAG, e.toString());
         }
 
 

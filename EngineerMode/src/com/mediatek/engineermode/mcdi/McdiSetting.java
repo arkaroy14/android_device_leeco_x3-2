@@ -44,7 +44,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.PowerManager;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -57,6 +56,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import com.mediatek.engineermode.R;
 import com.mediatek.engineermode.ShellExe;
+import com.mediatek.xlog.Xlog;
 
 public class McdiSetting extends Activity implements OnCheckedChangeListener, OnClickListener {
 
@@ -120,7 +120,7 @@ public class McdiSetting extends Activity implements OnCheckedChangeListener, On
          String cmd;
          String output;
 
-         Log.v("@M_" + TAG, "initUIByData()");
+         Xlog.v(TAG, "initUIByData()");
          // init mode
          cmd = CAT + " " +  MODE_FS;
          output = execCommand(cmd);
@@ -135,12 +135,12 @@ public class McdiSetting extends Activity implements OnCheckedChangeListener, On
          try {
              mMcdiMode = Integer.parseInt(output);
          } catch (NumberFormatException e) {
-             Log.e("@M_" + TAG, "NumberFormatException: " + e.getMessage());
+             Xlog.e(TAG, "NumberFormatException: " + e.getMessage());
          }
          try {
              mRBModeArray[mMcdiMode].setChecked(true);
          } catch (IndexOutOfBoundsException e) {
-             Log.e("@M_" + TAG, "mMcdiMode:" + mMcdiMode + " IndexOutOfBoundsException: " + e.getMessage());
+             Xlog.e(TAG, "mMcdiMode:" + mMcdiMode + " IndexOutOfBoundsException: " + e.getMessage());
          }
          // init timer value
          cmd = CAT + " " + TIMER_FS;
@@ -190,22 +190,22 @@ public class McdiSetting extends Activity implements OnCheckedChangeListener, On
              checkOneRadio(mRBTimerArray, mRBSetTimer, true);
              mBtnStartTimer.setEnabled(true);
          } else {
-             Log.w("@M_" + TAG, "unknown index: " + index);
+             Xlog.w(TAG, "unknown index: " + index);
          }
      }
 
      private String execCommand(String cmd) {
          int ret = -1;
-         Log.d("@M_" + TAG, "[cmd]:" + cmd);
+         Xlog.d(TAG, "[cmd]:" + cmd);
          //Toast.makeText(this, cmd, Toast.LENGTH_SHORT).show();
          try {
              ret = ShellExe.execCommand(cmd);
          } catch (IOException e) {
-             Log.e("@M_" + TAG, "IOException: " + e.getMessage());
+             Xlog.e(TAG, "IOException: " + e.getMessage());
          }
          if (ret == 0) {
              String outStr = ShellExe.getOutput();
-             Log.d("@M_" + TAG, "[output]: " + outStr);
+             Xlog.d(TAG, "[output]: " + outStr);
              return outStr;
          }
          return null;
@@ -263,7 +263,7 @@ public class McdiSetting extends Activity implements OnCheckedChangeListener, On
             showDialog("MCDI Setting", output);
             break;
         default:
-            Log.w("@M_" + TAG, "unknown view id: " + id);
+            Xlog.w(TAG, "unknown view id: " + id);
             break;
         }
     }
@@ -346,7 +346,7 @@ public class McdiSetting extends Activity implements OnCheckedChangeListener, On
             }
             break;
         default:
-            Log.w("@M_" + TAG, "unknown view id: " + id);
+            Xlog.w(TAG, "unknown view id: " + id);
             break;
         }
     }

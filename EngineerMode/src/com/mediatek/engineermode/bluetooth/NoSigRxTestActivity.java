@@ -48,7 +48,6 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -58,6 +57,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.mediatek.engineermode.R;
+import com.mediatek.xlog.Xlog;
 
 /**
  * Do bluetooth no singal rx test.
@@ -145,15 +145,15 @@ public class NoSigRxTestActivity extends Activity implements
         public void handleMessage(Message msg) {
             switch (msg.what) {
             case OP_IN_PROCESS:
-                Log.w("@M_" + TAG, "OP_IN_PROCESS");
+                Xlog.w(TAG, "OP_IN_PROCESS");
                 showDialog(DIALOG_RX_TEST);
                 break;
             case OP_FINISH:
-                Log.w("@M_" + TAG, "OP_FINISH");
+                Xlog.w(TAG, "OP_FINISH");
                 dismissDialog(DIALOG_RX_TEST);
                 break;
             case OP_RX_FAIL:
-                Log.w("@M_" + TAG, "OP_RX_FAIL");
+                Xlog.w(TAG, "OP_RX_FAIL");
                 showDialog(DIALOG_RX_FAIL);
                 break;
             case OP_ADDR_DEFAULT:
@@ -176,11 +176,11 @@ public class NoSigRxTestActivity extends Activity implements
                 mBtnStartTest.setText("Start");
                 break;
             case UI_BT_CLOSE:
-                Log.i("@M_" + TAG, "UI_BT_CLOSE");
+                Xlog.i(TAG, "UI_BT_CLOSE");
                 showDialog(DIALOG_BT_STOP);
                 break;
             case UI_BT_CLOSE_FINISHED:
-                Log.i("@M_" + TAG, "UI_BT_CLOSE_FINISHED");
+                Xlog.i(TAG, "UI_BT_CLOSE_FINISHED");
                 removeDialog(DIALOG_BT_STOP);
                 finish();
                 break;
@@ -240,7 +240,7 @@ public class NoSigRxTestActivity extends Activity implements
 
     @Override
     public void onBackPressed() {
-        Log.v("@M_" + TAG, "-->onBackPressed ");
+        Xlog.v(TAG, "-->onBackPressed ");
         if (mBtTest != null) {
             mWorkHandler.sendEmptyMessage(OP_BT_STOP);
         } else {
@@ -250,7 +250,7 @@ public class NoSigRxTestActivity extends Activity implements
 
     @Override
     public void onDestroy() {
-        Log.v("@M_" + TAG, "-->onDestroy");
+        Xlog.v(TAG, "-->onDestroy");
         if (mWorkThread != null) {
             mWorkThread.quit();
         }
@@ -275,7 +275,7 @@ public class NoSigRxTestActivity extends Activity implements
                 // do stop
                 if (mDumpStart == true) {
                     if (mBtTest != null) {
-                        Log.i("@M_" + TAG, "pollingStop");
+                        Xlog.i(TAG, "pollingStop");
                         mDumpStart = false;
                         mBtTest.pollingStop();
                     }
@@ -299,7 +299,7 @@ public class NoSigRxTestActivity extends Activity implements
 //        if (null != mPattern) {
 //            mPattern.setAdapter(adapterPattern);
 //        } else {
-//            Log.w("@M_" + TAG, "findViewById(R.id.PatternSpinner) failed");
+//            Xlog.w(TAG, "findViewById(R.id.PatternSpinner) failed");
 //        }
 
         // for TX pocket type
@@ -313,7 +313,7 @@ public class NoSigRxTestActivity extends Activity implements
 //        if (null != mPocketType) {
 //            mPocketType.setAdapter(adapterPocketType);
 //        } else {
-//            Log.w("@M_" + TAG, "findViewById(R.id.PocketTypeSpinner) failed");
+//            Xlog.w(TAG, "findViewById(R.id.PocketTypeSpinner) failed");
 //        }
     }
 
@@ -329,7 +329,7 @@ public class NoSigRxTestActivity extends Activity implements
            mWorkHandler.sendEmptyMessage(OP_BT_SEND);
 
         } else {
-            Log.w("@M_" + TAG, "last click is not finished yet."); // log
+            Xlog.w(TAG, "last click is not finished yet."); // log
         }
     }
 
@@ -339,7 +339,7 @@ public class NoSigRxTestActivity extends Activity implements
     private boolean doSendCommandAction() {
         if (mDumpStart == true) {
             if (mBtTest != null) {
-                Log.i("@M_" + TAG, "pollingStop");
+                Xlog.i(TAG, "pollingStop");
                 mDumpStart = false;
                 mBtTest.pollingStop();
             }
@@ -349,7 +349,7 @@ public class NoSigRxTestActivity extends Activity implements
             enableBluetooth(false);
             getValuesAndSend();
             if (mBtTest != null) {
-                Log.i("@M_" + TAG, "pollingStart");
+                Xlog.i(TAG, "pollingStart");
                 mBtTest.pollingStart();
                 mDumpStart = true;
             }
@@ -363,13 +363,13 @@ public class NoSigRxTestActivity extends Activity implements
     // implemented for DialogInterface.OnCancelListener
     public void onCancel(DialogInterface dialog) {
         // request that the service stop the query with this callback object.
-        Log.v("@M_" + TAG, "-->onCancel");
+        Xlog.v(TAG, "-->onCancel");
         finish();
     }
 
     @Override
     protected void onStart() {
-//        Log.v("@M_" + TAG, "-->onStart");
+//        Xlog.v(TAG, "-->onStart");
         super.onStart();
         if (mBtAdapter == null) {
             mBtAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -380,10 +380,10 @@ public class NoSigRxTestActivity extends Activity implements
     }
 
     private void getBtState() {
-        Log.v("@M_" + TAG, "Enter GetBtState().");
+        Xlog.v(TAG, "Enter GetBtState().");
         BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
         if (null == btAdapter) {
-            Log.v("@M_" + TAG, "we can not find a bluetooth adapter.");
+            Xlog.v(TAG, "we can not find a bluetooth adapter.");
             // Toast.makeText(getApplicationContext(),
             // "We can not find a bluetooth adapter.", Toast.LENGTH_SHORT)
             // .show();
@@ -391,33 +391,33 @@ public class NoSigRxTestActivity extends Activity implements
             return;
         }
         mStateBt = btAdapter.getState();
-        Log.v("@M_" + TAG, "Leave GetBtState().");
+        Xlog.v(TAG, "Leave GetBtState().");
     }
 
     private void enableBluetooth(boolean enable) {
-        Log.v("@M_" + TAG, "Enter EnableBluetooth().");
+        Xlog.v(TAG, "Enter EnableBluetooth().");
         BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
         if (null == btAdapter) {
-            Log.v("@M_" + TAG, "we can not find a bluetooth adapter.");
+            Xlog.v(TAG, "we can not find a bluetooth adapter.");
             return;
         }
         // need to enable
         if (enable) {
-            Log.v("@M_" + TAG, "Bluetooth is enabled");
+            Xlog.v(TAG, "Bluetooth is enabled");
             btAdapter.enable();
         } else {
             // need to disable
-            Log.v("@M_" + TAG, "Bluetooth is disabled");
+            Xlog.v(TAG, "Bluetooth is disabled");
             btAdapter.disable();
         }
-        Log.v("@M_" + TAG, "Leave EnableBluetooth().");
+        Xlog.v(TAG, "Leave EnableBluetooth().");
     }
 
     public void getValuesAndSend() {
-        Log.v("@M_" + TAG, "Enter GetValuesAndSend().");
+        Xlog.v(TAG, "Enter GetValuesAndSend().");
         mBtTest = null;
 //        if (mBtTest == null) {
-//            Log.v("@M_" + TAG, "We cannot find BtTest object.");
+//            Xlog.v(TAG, "We cannot find BtTest object.");
 //            return;
 //        }
         int nPatternIdx = mPattern.getSelectedItemPosition();
@@ -440,7 +440,7 @@ public class NoSigRxTestActivity extends Activity implements
                 mUiHandler.sendEmptyMessage(OP_ADDR_DEFAULT);
             }
         } catch (NumberFormatException e) {
-            Log.i("@M_" + TAG, "input number error!");
+            Xlog.i(TAG, "input number error!");
             return;
         }
 
@@ -451,7 +451,7 @@ public class NoSigRxTestActivity extends Activity implements
         if (rc) {
             mUiHandler.sendEmptyMessage(OP_TEST_OK_STEP1);
         } else {
-            Log.i("@M_" + TAG, "no signal rx test failed.");
+            Xlog.i(TAG, "no signal rx test failed.");
             if ((BluetoothAdapter.STATE_TURNING_ON == mStateBt)
                     || (BluetoothAdapter.STATE_ON == mStateBt)) {
                 enableBluetooth(true);
@@ -459,7 +459,7 @@ public class NoSigRxTestActivity extends Activity implements
             mUiHandler.sendEmptyMessage(OP_RX_FAIL);
         }
 
-        Log.i("@M_" + TAG, "Leave GetValuesAndSend().");
+        Xlog.i(TAG, "Leave GetValuesAndSend().");
     }
 
     private void getResult() {
@@ -469,7 +469,7 @@ public class NoSigRxTestActivity extends Activity implements
 
         mResult = mBtTest.noSigRxTestResult();
         if (mResult == null) {
-            Log.i("@M_" + TAG, "no signal rx test failed.");
+            Xlog.i(TAG, "no signal rx test failed.");
             if ((BluetoothAdapter.STATE_TURNING_ON == mStateBt)
                     || (BluetoothAdapter.STATE_ON == mStateBt)) {
                 enableBluetooth(true);
@@ -485,7 +485,7 @@ public class NoSigRxTestActivity extends Activity implements
 
         }
 
-        Log.i("@M_" + TAG, "Leave getresult().");
+        Xlog.i(TAG, "Leave getresult().");
     }
 
 }

@@ -46,7 +46,6 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.os.SystemProperties;
-import android.util.Log;
 import android.os.SystemClock;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -54,6 +53,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.mediatek.engineermode.R;
+import com.mediatek.xlog.Xlog;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -246,7 +246,7 @@ public class UsbTest extends Activity implements OnClickListener {
             mTestIf = extra.getBoolean(UsbList.IF_TEST);
             mTestIf_OTG20 = extra.getBoolean(UsbList.IF_OTG20_TEST);
         }
-        Log.v("@M_" + TAG, "is test IF ? " + mTestIf + ", is mTestIf_OTG20 ? " + mTestIf_OTG20);
+        Xlog.v(TAG, "is test IF ? " + mTestIf + ", is mTestIf_OTG20 ? " + mTestIf_OTG20);
 
         if (mTestIf) {
             setContentView(R.layout.usb_test);
@@ -270,7 +270,7 @@ public class UsbTest extends Activity implements OnClickListener {
         }
 
         if (mTestIf_OTG20) {
-            Log.v("@M_" + TAG, "mTestIf_OTG20 test");
+            Xlog.v(TAG, "mTestIf_OTG20 test");
             updateAllBtn_OTG20(mTestIf_OTG20_enabled) ;
         } else {
             if (!UsbDriver.nativeInit()) {
@@ -338,9 +338,9 @@ public class UsbTest extends Activity implements OnClickListener {
                         new InputStreamReader(ins));
                 String line = null;
                 while ((line = reader.readLine()) != null) {
-                    Log.i("@M_" + TAG, "thread id " + Thread.currentThread().getId() + " ,line is " + line);
+                    Xlog.i(TAG, "thread id " + Thread.currentThread().getId() + " ,line is " + line);
                 }
-                Log.i("@M_" + TAG, "thread id " + Thread.currentThread().getId() + " ,read line done");
+                Xlog.i(TAG, "thread id " + Thread.currentThread().getId() + " ,read line done");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -356,7 +356,7 @@ public class UsbTest extends Activity implements OnClickListener {
      */
     public static void usbExecProcWrite(String proc_path , String value) {
         // Open the sysfs file for writing and write "1" to it.
-        Log.i("@M_" + TAG, "myexecProc : , proc_path is " + proc_path + " value is " + value) ;
+        Xlog.i(TAG, "myexecProc : , proc_path is " + proc_path + " value is " + value) ;
 
         PrintWriter outStream = null;
         try {
@@ -370,7 +370,7 @@ public class UsbTest extends Activity implements OnClickListener {
                 outStream.close();
         }
 
-        Log.i("@M_" + TAG, "myexecProc : done") ;
+        Xlog.i(TAG, "myexecProc : done") ;
     }
 
     /**
@@ -380,7 +380,7 @@ public class UsbTest extends Activity implements OnClickListener {
      */
     public static int usbExecCommand(String[] command) {
 
-        Log.i("@M_" + TAG, "usbExecCommand : , command is " + Arrays.toString(command)) ;
+        Xlog.i(TAG, "usbExecCommand : , command is " + Arrays.toString(command)) ;
 
         sResult.delete(0, sResult.length());
         try {
@@ -394,7 +394,7 @@ public class UsbTest extends Activity implements OnClickListener {
 
             int exitValue = proc.waitFor();
 
-            Log.i("@M_" + TAG, "waitFor value = " + exitValue + ", done");
+            Xlog.i(TAG, "waitFor value = " + exitValue + ", done");
 
             return 0;
         } catch (IOException e) {
@@ -408,7 +408,7 @@ public class UsbTest extends Activity implements OnClickListener {
 
     private int usbSwitchToIFOTG20mode(boolean enable) {
 
-        Log.i("@M_" + TAG, "usbSwitchToIFOTG20mode : enaable is " + enable);
+        Xlog.i(TAG, "usbSwitchToIFOTG20mode : enaable is " + enable);
 
         if (enable) {
             // 1. stop adbd
@@ -462,7 +462,7 @@ public class UsbTest extends Activity implements OnClickListener {
 
     private int usbIFU3DrvVbus(boolean enable) {
 
-        Log.i("@M_" + TAG, "usbIFU3enVbus : enaable is " + enable);
+        Xlog.i(TAG, "usbIFU3enVbus : enaable is " + enable);
 
         if (enable) {
             usbExecCommand(cmd_ts_mu3h_hcdinit);
@@ -476,11 +476,11 @@ public class UsbTest extends Activity implements OnClickListener {
 
     private int usbIFU3ElecTestMode(boolean enable, String mode) {
 
-        Log.i("@M_" + TAG, "usbIFU3ElecTestMode : enaable is " + enable + " , mode is " + mode) ;
+        Xlog.i(TAG, "usbIFU3ElecTestMode : enaable is " + enable + " , mode is " + mode) ;
         if (enable) {
             usbExecCommand(cmd_ts_mu3h_hcdinit) ;
             cmd_ts_mu3h_hcdhosttestmode_start[2] = mode;
-            Log.i("@M_" + TAG, "usbIFU3ElecTestMode : , cmd_ts_mu3h_hcdhosttestmode_start is " + Arrays.toString(cmd_ts_mu3h_hcdhosttestmode_start)) ;
+            Xlog.i(TAG, "usbIFU3ElecTestMode : , cmd_ts_mu3h_hcdhosttestmode_start is " + Arrays.toString(cmd_ts_mu3h_hcdhosttestmode_start)) ;
             usbExecCommand(cmd_ts_mu3h_hcdhosttestmode_start);
         } else {
             usbExecCommand(cmd_ts_mu3h_hcdhosttestmode_stop);
@@ -491,7 +491,7 @@ public class UsbTest extends Activity implements OnClickListener {
 
     private int usbIFOTG20uutATest(boolean enable) {
 
-        Log.i("@M_" + TAG, "usbIFOTG20uutATest : enaable is " + enable);
+        Xlog.i(TAG, "usbIFOTG20uutATest : enaable is " + enable);
 
         if (enable) {
             // 1. start mu3h uuta mode
@@ -512,7 +512,7 @@ public class UsbTest extends Activity implements OnClickListener {
 
     private int usbIFOTG20uutBTest(boolean enable) {
 
-        Log.i("@M_" + TAG, "usbIFOTG20uutBTest : enaable is " + enable);
+        Xlog.i(TAG, "usbIFOTG20uutBTest : enaable is " + enable);
 
         if (enable) {
             // 1. start mu3h uutb mode
@@ -547,7 +547,7 @@ public class UsbTest extends Activity implements OnClickListener {
         Button btn_enter_otg20;
         Button btn_exit_otg20;
 
-        Log.d("@M_" + TAG, "-->updateAllBtn_OTG20, mBtnIds.length is " + mBtnIds.length + ", BUTTONS_IDS_IF_OTG20.length is " + BUTTONS_IDS_IF_OTG20.length);
+        Xlog.d(TAG, "-->updateAllBtn_OTG20, mBtnIds.length is " + mBtnIds.length + ", BUTTONS_IDS_IF_OTG20.length is " + BUTTONS_IDS_IF_OTG20.length);
 
         //btn_enter_otg20 = (Button) findViewById(mBtnIds[0]);
         //btn_exit_otg20 = (Button) findViewById(mBtnIds[1]);
@@ -555,7 +555,7 @@ public class UsbTest extends Activity implements OnClickListener {
         btn_enter_otg20 = mBtnList[0];
         btn_exit_otg20 = mBtnList[1];
 
-        Log.d("@M_" + TAG, "-->updateAllBtn_OTG20, in_usbif_test_mode is " + in_usbif_test_mode);
+        Xlog.d(TAG, "-->updateAllBtn_OTG20, in_usbif_test_mode is " + in_usbif_test_mode);
 
         if (in_usbif_test_mode) {
             for (Button btn : mBtnList) {
@@ -598,7 +598,7 @@ public class UsbTest extends Activity implements OnClickListener {
 
     @Override
     protected Dialog onCreateDialog(int id) {
-        Log.d("@M_" + TAG, "-->onCreateDialog");
+        Xlog.d(TAG, "-->onCreateDialog");
         if (id == DLG_STOP) {
             ProgressDialog dialog = new ProgressDialog(this);
             dialog.setTitle(R.string.USB_IF_TEST);
@@ -642,11 +642,11 @@ public class UsbTest extends Activity implements OnClickListener {
 
     @Override
     protected void onDestroy() {
-        Log.v("@M_" + TAG, "-->onDestroy");
+        Xlog.v(TAG, "-->onDestroy");
         if (mRun) {
             mRun = false;
              if (!UsbDriver.nativeStopTest(mCommand)) {
-                 Log.w("@M_" + TAG, "onDestroy() nativeStopTest fail");
+                 Xlog.w(TAG, "onDestroy() nativeStopTest fail");
              }
         }
         UsbDriver.nativeCleanMsg();
@@ -685,8 +685,8 @@ public class UsbTest extends Activity implements OnClickListener {
                 stopBtn = mBtnList[btnIndex];
             }
         }
-        Log.v("@M_" + TAG, "isSTART--" + isSTART);
-        Log.v("@M_" + TAG, "command--" + mCommand);
+        Xlog.v(TAG, "isSTART--" + isSTART);
+        Xlog.v(TAG, "command--" + mCommand);
 
         if (mTestIf_OTG20) {
             if (mCommand == USBIF_OTG20_MODE) {
@@ -759,11 +759,11 @@ public class UsbTest extends Activity implements OnClickListener {
     private int findBtnIndex(int id) {
         for (int i = 0; i < mBtnIds.length; i++) {
             if (id == mBtnIds[i]) {
-                Log.d("@M_" + TAG, "find btn index: " + i);
+                Xlog.d(TAG, "find btn index: " + i);
                 return i;
             }
         }
-        Log.d("@M_" + TAG, "find btn index error");
+        Xlog.d(TAG, "find btn index error");
         return -1;
     }
 
@@ -776,8 +776,8 @@ public class UsbTest extends Activity implements OnClickListener {
         public void handleMessage(Message msg) {
             switch (msg.what) {
             case START_TEST:
-                Log.v("@M_" + TAG, "command--" + mCommand);
-                Log.v("@M_" + TAG, "handleMessage command--" + mCommand);
+                Xlog.v(TAG, "command--" + mCommand);
+                Xlog.v(TAG, "handleMessage command--" + mCommand);
                 if (mTestIf_OTG20) {  // USBIF mode enable switch
                     if (mCommand == USBIF_OTG20_MODE) {
                         mTestIf_OTG20_enabled = true ;
@@ -814,10 +814,10 @@ public class UsbTest extends Activity implements OnClickListener {
                     }
                 }
 
-                Log.v("@M_" + TAG, "Task finish");
+                Xlog.v(TAG, "Task finish");
                 break;
             default:
-                Log.w("@M_" + TAG, "Unhandled msg: " + msg.what);
+                Xlog.w(TAG, "Unhandled msg: " + msg.what);
                 break;
             }
             super.handleMessage(msg);
@@ -836,7 +836,7 @@ public class UsbTest extends Activity implements OnClickListener {
                  if (mRun) {
                  if (!mTestIf_OTG20) {
                      mMsg = UsbDriver.nativeGetMsg();
-                     Log.d("@M_" + TAG, "getMsg() " + mMsg);
+                     Xlog.d(TAG, "getMsg() " + mMsg);
                      if (0 != mMsg) {
                          mUiHandler.sendEmptyMessage(UPDATAT_MSG);
                      } else {
@@ -846,7 +846,7 @@ public class UsbTest extends Activity implements OnClickListener {
                  }
                 break;
             default:
-                Log.w("@M_" + TAG, "Unhandled msg: " + msg.what);
+                Xlog.w(TAG, "Unhandled msg: " + msg.what);
                 break;
             }
             super.handleMessage(msg);

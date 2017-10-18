@@ -23,7 +23,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:singleLine="true"
             android:hint="@string/desense_freqhopping_hopdeltafreq"
             android:maxLength="6" />
 
@@ -39,7 +38,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:singleLine="true"
             android:hint="@string/desense_freqhopping_hopdeltatime"
             android:maxLength="2" />
     </LinearLayout>
@@ -104,7 +102,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:singleLine="true"
             android:hint="@string/desense_freqhopping_hint_dds"
             android:editable="false"
             android:maxLength="8" />
@@ -125,7 +122,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:singleLine="true"
             android:hint="@string/desense_freqhopping_hint_freq"
             android:maxLength="1" />
 
@@ -141,7 +137,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:singleLine="true"
             android:hint="@string/desense_freqhopping_hint_time"
             android:maxLength="1" />
     </LinearLayout>
@@ -164,7 +159,6 @@
             android:layout_weight="1"
             android:hint="@string/desense_freqhopping_hint_upper"
             android:maxLength="2" 
-            android:singleLine="true"
             android:numeric="decimal"/>
         <TextView
             android:layout_width="wrap_content"
@@ -185,7 +179,6 @@
             android:layout_weight="1"
             android:hint="@string/desense_freqhopping_hint_down"
             android:maxLength="2" 
-            android:singleLine="true"
             android:numeric="decimal"/>
         <TextView
             android:layout_width="wrap_content"
@@ -231,7 +224,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:singleLine="true"
             android:hint="@string/desense_freqhopping_hop_dds"
             android:maxLength="6" />
 

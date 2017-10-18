@@ -43,7 +43,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -56,6 +55,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import com.mediatek.engineermode.R;
 import com.mediatek.engineermode.ShellExe;
+import com.mediatek.xlog.Xlog;
 
 public class DeepIdleSettingActivity extends Activity implements OnClickListener,
         OnCheckedChangeListener {
@@ -149,12 +149,12 @@ public class DeepIdleSettingActivity extends Activity implements OnClickListener
         try {
             modeIdx = Integer.parseInt(output);
         } catch (NumberFormatException e) {
-            Log.e("@M_" + TAG, "NumberFormatException invalid output:" + output);
+            Xlog.e(TAG, "NumberFormatException invalid output:" + output);
         }
         try {
             mRBModes[modeIdx].setChecked(true);
         } catch (IndexOutOfBoundsException e) {
-            Log.e("@M_" + TAG, "Fail to set Default Mode; IndexOutOfBoundsException: " + e.getMessage());
+            Xlog.e(TAG, "Fail to set Default Mode; IndexOutOfBoundsException: " + e.getMessage());
         }
 
         cmd = CAT + FS_DPIDLE_LEVEL;
@@ -170,12 +170,12 @@ public class DeepIdleSettingActivity extends Activity implements OnClickListener
         try {
             levelIdx = Integer.parseInt(output);
         } catch (NumberFormatException e) {
-            Log.e("@M_" + TAG, "NumberFormatException invalid output:" + output);
+            Xlog.e(TAG, "NumberFormatException invalid output:" + output);
         }
         try {
             mRBLevels[levelIdx].setChecked(true);
         } catch (IndexOutOfBoundsException e) {
-            Log.e("@M_" + TAG, "Fail to set Default Level; IndexOutOfBoundsException: " + e.getMessage());
+            Xlog.e(TAG, "Fail to set Default Level; IndexOutOfBoundsException: " + e.getMessage());
         }
 
         cmd = CAT + FS_DPIDLE_TIMERVAL;
@@ -187,12 +187,12 @@ public class DeepIdleSettingActivity extends Activity implements OnClickListener
             return;
         }
         output = output.trim();
-        Log.d("@M_" + TAG, "timer val output: " + output);
+        Xlog.d(TAG, "timer val output: " + output);
         int timerVal = -1;
         try {
             timerVal = Integer.parseInt(output);
         } catch (NumberFormatException e) {
-            Log.e("@M_" + TAG, "NumberFormatException invalid output:" + output);
+            Xlog.e(TAG, "NumberFormatException invalid output:" + output);
         }
         if (timerVal == 0) {
             mRBDisableTimer.setChecked(true);
@@ -200,7 +200,7 @@ public class DeepIdleSettingActivity extends Activity implements OnClickListener
             mRBTimerValSet.setChecked(true);
             mEditTimerVal.setText(output);
         } else {
-            Log.e("@M_" + TAG, "Invalid Timer Value:" + timerVal);
+            Xlog.e(TAG, "Invalid Timer Value:" + timerVal);
         }
     }
 
@@ -229,16 +229,16 @@ public class DeepIdleSettingActivity extends Activity implements OnClickListener
 
     private String execCommand(String cmd) {
          int ret = -1;
-         Log.d("@M_" + TAG, "[cmd]:" + cmd);
+         Xlog.d(TAG, "[cmd]:" + cmd);
          //Toast.makeText(this, cmd, Toast.LENGTH_SHORT).show();
          try {
              ret = ShellExe.execCommand(cmd);
          } catch (IOException e) {
-             Log.e("@M_" + TAG, "IOException: " + e.getMessage());
+             Xlog.e(TAG, "IOException: " + e.getMessage());
          }
          if (ret == 0) {
              String outStr = ShellExe.getOutput();
-             Log.d("@M_" + TAG, "[output]: " + outStr);
+             Xlog.d(TAG, "[output]: " + outStr);
              return outStr;
          }
          return null;
@@ -324,7 +324,7 @@ public class DeepIdleSettingActivity extends Activity implements OnClickListener
             showDialog(getString(R.string.deep_idle_setting), output);
             break;
         default:
-            Log.w("@M_" + TAG, "unknown view id: " + id);
+            Xlog.w(TAG, "unknown view id: " + id);
             break;
         }
     }
@@ -366,7 +366,7 @@ public class DeepIdleSettingActivity extends Activity implements OnClickListener
             break;
         case R.id.deep_idle_timer_disable:
             if (isChecked) {
-                Log.d("@M_" + TAG, "[debug]onCheckedChanged: deepIdle timer disable");
+                Xlog.d(TAG, "[debug]onCheckedChanged: deepIdle timer disable");
                 enableTimerValUI(false);
                 checkOneRadio(mRBTimerVals, mRBDisableTimer, true);
                 setTimerVal("0");
@@ -379,7 +379,7 @@ public class DeepIdleSettingActivity extends Activity implements OnClickListener
             }
             break;
         default:
-            Log.w("@M_" + TAG, "Unknown CompoundButton id: " + id);
+            Xlog.w(TAG, "Unknown CompoundButton id: " + id);
             break;
         }
     }

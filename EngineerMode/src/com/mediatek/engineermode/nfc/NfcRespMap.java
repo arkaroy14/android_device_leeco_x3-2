@@ -23,10 +23,9 @@ public class NfcRespMap {
      * @return NfcRespMap's single instance
      */
     public static NfcRespMap getInst() {
-
-        synchronized (NfcRespMap.class) {
-            if (sRespMap == null) {
-                    sRespMap = new NfcRespMap();
+        if (sRespMap == null) {
+            synchronized (NfcRespMap.class) {
+                sRespMap = new NfcRespMap();
             }
         }
         return sRespMap;

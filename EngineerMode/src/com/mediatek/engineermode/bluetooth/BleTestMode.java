@@ -48,7 +48,6 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -62,6 +61,7 @@ import android.widget.TextView;
 
 
 import com.mediatek.engineermode.R;
+import com.mediatek.xlog.Xlog;
 
 /**
  * Do BT BLE test mode
@@ -137,7 +137,7 @@ public class BleTestMode extends Activity implements OnClickListener {
 
     @Override
     protected void onCreate(Bundle onSavedInstanceState) {
-//        Log.v("@M_" + TAG, "-->onCreate");
+//        Xlog.v(TAG, "-->onCreate");
         super.onCreate(onSavedInstanceState);
         setContentView(R.layout.ble_test_mode);
         
@@ -188,12 +188,12 @@ public class BleTestMode extends Activity implements OnClickListener {
 
             public void onItemSelected(AdapterView<?> arg0, View arg1,
                     int arg2, long arg3) {
-                Log.i("@M_" + TAG, "item id = " + arg2);
+                Xlog.i(TAG, "item id = " + arg2);
                 mChannelValue = (byte) arg2;
             }
 
             public void onNothingSelected(AdapterView<?> arg0) {
-                Log.i("@M_" + TAG, "DO Nothing ");
+                Xlog.i(TAG, "DO Nothing ");
             }
         });
 
@@ -209,12 +209,12 @@ public class BleTestMode extends Activity implements OnClickListener {
         mPatternSpn.setOnItemSelectedListener(new OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> arg0, View arg1,
                     int arg2, long arg3) {
-                Log.i("@M_" + TAG, "item id = " + arg2);
+                Xlog.i(TAG, "item id = " + arg2);
                 mPatternValue = (byte) arg2;
             }
 
             public void onNothingSelected(AdapterView<?> arg0) {
-                Log.i("@M_" + TAG, "DO Nothing ");
+                Xlog.i(TAG, "DO Nothing ");
             }
         });
 
@@ -233,7 +233,7 @@ public class BleTestMode extends Activity implements OnClickListener {
     private Handler mUiHandler = new Handler() {
         // @Override
         public void handleMessage(Message msg) {
-            Log.i("@M_" + TAG, "-->main Handler - handleMessage");
+            Xlog.i(TAG, "-->main Handler - handleMessage");
             mResultText.setText(mResultStr);
             switch (msg.what) {
             case TEST_SUCCESS:
@@ -260,7 +260,7 @@ public class BleTestMode extends Activity implements OnClickListener {
      */
     @Override
     protected void onResume() {
-//        Log.v("@M_" + TAG, "-->onResume");
+//        Xlog.v(TAG, "-->onResume");
         super.onResume();
         if (mBtAdapter == null) {
             mBtAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -276,7 +276,7 @@ public class BleTestMode extends Activity implements OnClickListener {
 
     @Override
     protected Dialog onCreateDialog(int id) {
-        Log.d("@M_" + TAG, "-->onCreateDialog");
+        Xlog.d(TAG, "-->onCreateDialog");
         if (id == CHECK_STOP) {
             ProgressDialog dialog = new ProgressDialog(this);
 
@@ -321,7 +321,7 @@ public class BleTestMode extends Activity implements OnClickListener {
 
     @Override
     protected void onDestroy() {
-        Log.v("@M_" + TAG, "-->onDestroy");
+        Xlog.v(TAG, "-->onDestroy");
         mWorkHandler.sendEmptyMessage(ACTIVITY_EXIT);
         // mWorkThread = null;
         super.onDestroy();
@@ -334,7 +334,7 @@ public class BleTestMode extends Activity implements OnClickListener {
      * selection Rx: 04 0E 04 01 1E 20 00 //HCI Command Complete Event
      */
     private boolean handleTxTestStart() {
-        Log.v("@M_" + TAG, "-->handleTxTestStart");
+        Xlog.v(TAG, "-->handleTxTestStart");
 
         int cmdLen = 7;
         char[] cmd = new char[cmdLen];
@@ -353,11 +353,11 @@ public class BleTestMode extends Activity implements OnClickListener {
             String s = null;
             for (i = 0; i < response.length; i++) {
                 s = String.format("response[%d] = 0x%x", i, (long) response[i]);
-                Log.v("@M_" + TAG, s);
+                Xlog.v(TAG, s);
             }
         }
 //        else {
-//            Log.i("@M_" + TAG, "HCICommandRun failed");
+//            Xlog.i(TAG, "HCICommandRun failed");
 //            return false;
 //        }
         // here we need to judge whether this operation is succeeded or not
@@ -372,7 +372,7 @@ public class BleTestMode extends Activity implements OnClickListener {
      */
     private void handleTxTestStop() {
 
-        Log.v("@M_" + TAG, "-->handleTxTestStop");
+        Xlog.v(TAG, "-->handleTxTestStop");
         int cmdLen = 4;
         char[] cmd = new char[cmdLen];
         char[] response = null;
@@ -388,11 +388,11 @@ public class BleTestMode extends Activity implements OnClickListener {
             String s = null;
             for (i = 0; i < response.length; i++) {
                 s = String.format("response[%d] = 0x%x", i, (long) response[i]);
-                Log.v("@M_" + TAG, s);
+                Xlog.v(TAG, s);
             }
         }
 //        else {
-//            Log.i("@M_" + TAG, "HCICommandRun failed");
+//            Xlog.i(TAG, "HCICommandRun failed");
 //            return;
 //        }
         response = null;
@@ -407,7 +407,7 @@ public class BleTestMode extends Activity implements OnClickListener {
      * 
      */
     private boolean handleRxTestStart() {
-        Log.v("@M_" + TAG, "-->handleRxTestStart");
+        Xlog.v(TAG, "-->handleRxTestStart");
         char[] cmd = new char[5];
         char[] response = null;
         cmd[0] = 0x01;
@@ -420,7 +420,7 @@ public class BleTestMode extends Activity implements OnClickListener {
             String s = null;
             for (int i = 0; i < response.length; i++) {
                 s = String.format("response[%d] = 0x%x", i, (long) response[i]);
-                Log.v("@M_" + TAG, s);
+                Xlog.v(TAG, s);
             }
         }
         return true;
@@ -433,7 +433,7 @@ public class BleTestMode extends Activity implements OnClickListener {
      * means do not care Packet Count = 0xAABB
      */
     private void handleRxTestStop() {
-        Log.v("@M_" + TAG, "-->handleRxTestStop");
+        Xlog.v(TAG, "-->handleRxTestStop");
         char[] cmd = {0x01, 0x1F, 0x20, 0x00};
         char[] response = null;
         response = mBtTest.hciCommandRun(cmd, cmd.length);
@@ -441,7 +441,7 @@ public class BleTestMode extends Activity implements OnClickListener {
             String s = null;
             for (int i = 0; i < response.length; i++) {
                 s = String.format("response[%d] = 0x%x", i, (long) response[i]);
-                Log.v("@M_" + TAG, s);
+                Xlog.v(TAG, s);
             }
             // Response format: 04 0e 0a/06 01 1f 20 00 BB AA 00 00...
             // packet count = 0xAABB
@@ -456,7 +456,7 @@ public class BleTestMode extends Activity implements OnClickListener {
      * @return 0 success
      */
     private boolean handleStartBtnClick() {
-        Log.v("@M_" + TAG, "-->handleStartBtnClick");
+        Xlog.v(TAG, "-->handleStartBtnClick");
         // BLEResult_String = "Response:";
         // judge if Rx or Tx test is selected
         /*
@@ -475,13 +475,13 @@ public class BleTestMode extends Activity implements OnClickListener {
         // HCI reset command
         response = mBtTest.hciCommandRun(cmd, cmdLen);
         if (response == null) {
-            Log.i("@M_" + TAG, "HCICommandRun failed");
+            Xlog.i(TAG, "HCICommandRun failed");
             return false;
         } else {
             String s = null;
             for (i = 0; i < response.length; i++) {
                 s = String.format("response[%d] = 0x%x", i, (long) response[i]);
-                Log.v("@M_" + TAG, s);
+                Xlog.v(TAG, s);
             }
         }
         response = null;
@@ -501,7 +501,7 @@ public class BleTestMode extends Activity implements OnClickListener {
          * If pressing "HCI Reset" button Tx: 01 03 0C 00 Rx: 04 0E 04 01 03 0C
          * 00 After pressing "HCI Reset" button, all state will also be reset
          */
-        Log.i("@M_" + TAG, "-->runHCIResetCmd");
+        Xlog.i(TAG, "-->runHCIResetCmd");
         int cmdLen = 4;
         char[] cmd = new char[cmdLen];
         char[] response = null;
@@ -513,12 +513,12 @@ public class BleTestMode extends Activity implements OnClickListener {
         cmd[3] = 0x00;
         response = mBtTest.hciCommandRun(cmd, cmdLen);
         if (response == null) {
-            Log.v("@M_" + TAG, "HCICommandRun failed");
+            Xlog.v(TAG, "HCICommandRun failed");
         } else {
             String s = null;
             for (i = 0; i < response.length; i++) {
                 s = String.format("response[%d] = 0x%x", i, (long) response[i]);
-                Log.v("@M_" + TAG, s);
+                Xlog.v(TAG, s);
             }
         }
         // here we need to judge whether this operation is succeeded or not
@@ -529,7 +529,7 @@ public class BleTestMode extends Activity implements OnClickListener {
      * stop test.
      */
     private void handleStopBtnClick() {
-        Log.v("@M_" + TAG, "-->handleStopBtnClick");
+        Xlog.v(TAG, "-->handleStopBtnClick");
         if (mTxTest) {
             handleTxTestStop();
         } else {
@@ -545,7 +545,7 @@ public class BleTestMode extends Activity implements OnClickListener {
      */
     public void onClick(View v) {
 
-        Log.v("@M_" + TAG, "-->onClick");
+        Xlog.v(TAG, "-->onClick");
         if (v.equals(mBtnStart)) {
             setViewState(true);
             mWorkHandler.sendEmptyMessage(TEST_START);
@@ -578,7 +578,7 @@ public class BleTestMode extends Activity implements OnClickListener {
             // Single test button is clicked
            // mHopping = false;
         } else {
-            Log.i("@M_" + TAG, "no view matches current view");
+            Xlog.i(TAG, "no view matches current view");
         }
         */
     }
@@ -609,7 +609,7 @@ public class BleTestMode extends Activity implements OnClickListener {
      * @return true if success.
      */
     private boolean initBtTestOjbect() {
-        Log.v("@M_" + TAG, "-->initBtTestOjbect");
+        Xlog.v(TAG, "-->initBtTestOjbect");
         if (mIniting) {
             return false;
         }
@@ -626,7 +626,7 @@ public class BleTestMode extends Activity implements OnClickListener {
                 mBtInited = true;                
             } else {
                 mBtInited = false;
-                Log.i("@M_" + TAG, "mBT initialization failed");
+                Xlog.i(TAG, "mBT initialization failed");
             }
         }
         mIniting = false;
@@ -639,14 +639,14 @@ public class BleTestMode extends Activity implements OnClickListener {
      * @return true if success.
      */
     private boolean uninitBtTestOjbect() {
-        Log.v("@M_" + TAG, "-->uninitBtTestOjbect");
+        Xlog.v(TAG, "-->uninitBtTestOjbect");
         if (mBtTest != null && mBtInited) {
             if (mTestStared) {
                 // handleStopBtnClick();
                 runHCIResetCmd();
             }
             if (mBtTest.unInit() != RENTURN_SUCCESS) {
-                Log.i("@M_" + TAG, "mBT un-initialization failed");
+                Xlog.i(TAG, "mBT un-initialization failed");
             }
         }
         mBtTest = null;

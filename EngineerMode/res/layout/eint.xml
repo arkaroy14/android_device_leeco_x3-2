@@ -31,7 +31,6 @@
                 android:layout_marginLeft="10dip"
                 android:layout_marginTop="10dip"
                 android:numeric="integer"
-                android:singleLine="true"
                 android:text="@string/EINT_edit" >
             </EditText>
 

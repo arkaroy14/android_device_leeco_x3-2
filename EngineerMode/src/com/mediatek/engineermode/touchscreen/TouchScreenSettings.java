@@ -43,7 +43,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -56,6 +55,7 @@ import android.widget.Toast;
 
 
 import com.mediatek.engineermode.R;
+import com.mediatek.xlog.Xlog;
 
 import java.io.File;
 import java.io.IOException;
@@ -113,7 +113,7 @@ public class TouchScreenSettings extends Activity implements OnClickListener {
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
-//        Log.v("@M_" + TAG, "-->onCreate");
+//        Xlog.v(TAG, "-->onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.touch_settings);
 
@@ -174,7 +174,7 @@ public class TouchScreenSettings extends Activity implements OnClickListener {
         // exist or
         // wait()
         // return2
-        Log.v("@M_" + TAG, "-->GetFileValue:" + path);
+        Xlog.v(TAG, "-->GetFileValue:" + path);
         int ret;
         try {
             ret = TouchScreenShellExe.execCommand(cmd);
@@ -185,14 +185,14 @@ public class TouchScreenSettings extends Activity implements OnClickListener {
                 return "N/A";
             }
         } catch (IOException e) {
-            Log.v("@M_" + TAG, "-->GetFileValue:" + e.getMessage());
+            Xlog.v(TAG, "-->GetFileValue:" + e.getMessage());
             return "N/A";
         }
     }
 
     @Override
     public void onResume() {
-//        Log.v("@M_" + TAG, "-->onResume");
+//        Xlog.v(TAG, "-->onResume");
         super.onResume();
         // final SharedPreferences preferences =
         // this.getSharedPreferences("touch_screen_settings",
@@ -264,17 +264,17 @@ public class TouchScreenSettings extends Activity implements OnClickListener {
                     // currentFileName;
                     String shell = "cat /sys/module/tpd_debug/parameters/tpd_em_log  >> "
                             + sCurrentFileName;
-                    Log.v("@M_" + TAG, "run file shell--" + shell);
+                    Xlog.v(TAG, "run file shell--" + shell);
                     String[] cmd2 = { "/system/bin/sh", "-c", shell };
                     int ret = 0;
                     try {
                         ret = TouchScreenShellExe.execCommand(cmd2);
                         if (0 != ret) {
-                            Log.i("@M_" + TAG, "cat >> failed!! ");
+                            Xlog.i(TAG, "cat >> failed!! ");
                             // return;
                         }
                     } catch (IOException e) {
-                        Log.w("@M_" + TAG, "cat >> failed!!  io exception");
+                        Xlog.w(TAG, "cat >> failed!!  io exception");
                     }
                 }
 
@@ -282,7 +282,7 @@ public class TouchScreenSettings extends Activity implements OnClickListener {
                     sleep(10);
                     // Log.i("MTHR", "After sleep");
                 } catch (InterruptedException e) {
-                    Log.w("@M_" + TAG, "sleep(10) >> exception!!!");
+                    Xlog.w(TAG, "sleep(10) >> exception!!!");
 
                 }
             }
@@ -293,7 +293,7 @@ public class TouchScreenSettings extends Activity implements OnClickListener {
 
             mUpdateHandler.sendMessage(msg);
 
-            Log.i("@M_" + TAG, "Copy /proc/tpd_em_log success");
+            Xlog.i(TAG, "Copy /proc/tpd_em_log success");
         }
     }
 
@@ -330,7 +330,7 @@ public class TouchScreenSettings extends Activity implements OnClickListener {
 //                        if (editString.equals("0")) {
                         // close file log
                         sRun = false;
-                        Log.i("@M_" + TAG, "close file log mRun = " + sRun);
+                        Xlog.i(TAG, "close file log mRun = " + sRun);
                         setCategory("0");
                         SharedPreferences.Editor editor = preferences.edit();
                         editor.putString("filename", "N");
@@ -387,7 +387,7 @@ public class TouchScreenSettings extends Activity implements OnClickListener {
 
                         if (!touchLog.isDirectory()) {
                             touchLog.mkdirs();
-                            Log.i("@M_" + TAG, "mkdir " + touchLog.getPath()
+                            Xlog.i(TAG, "mkdir " + touchLog.getPath()
                                     + " success");
                         }
                         SimpleDateFormat df = new SimpleDateFormat(
@@ -395,7 +395,7 @@ public class TouchScreenSettings extends Activity implements OnClickListener {
                         sCurrentFileName = touchLog.getPath() + "/L"
                                 + df.format(new Date().getTime());
                         String shell = "echo START > " + sCurrentFileName;
-                        Log.i("@M_" + TAG, "file shell " + shell);
+                        Xlog.i(TAG, "file shell " + shell);
                         String[] cmd2 = { "/system/bin/sh", "-c", shell };
                         ret = TouchScreenShellExe.execCommand(cmd2);
                         if (0 != ret) {
@@ -410,10 +410,10 @@ public class TouchScreenSettings extends Activity implements OnClickListener {
                         sRun = true;
                         new WorkThread().start();
 
-                        Log.v("@M_" + TAG, "thread start mRun = " + sRun);
+                        Xlog.v(TAG, "thread start mRun = " + sRun);
                         Toast.makeText(this, "Start log file to sdcard.",
                                 Toast.LENGTH_SHORT).show();
-                        Log.v("@M_" + TAG, "Start log file to sdcard.");
+                        Xlog.v(TAG, "Start log file to sdcard.");
                         SharedPreferences.Editor editor = preferences.edit();
                         editor.putString("filename", sCurrentFileName);
                         editor.commit();
@@ -425,7 +425,7 @@ public class TouchScreenSettings extends Activity implements OnClickListener {
                     if ("0".equals(editString)) {
 //                        if (editString.equals("0")) {
                         sRun = false;
-                        Log.i("@M_" + TAG, "uart close mRun = " + sRun);
+                        Xlog.i(TAG, "uart close mRun = " + sRun);
                         final SharedPreferences preferences = this
                                 .getSharedPreferences("touch_screen_settings",
                                         android.content.Context.MODE_PRIVATE);
@@ -478,7 +478,7 @@ public class TouchScreenSettings extends Activity implements OnClickListener {
                 }
 
             } catch (IOException e) {
-                Log.i("@M_" + TAG, e.toString());
+                Xlog.i(TAG, e.toString());
                 Toast.makeText(this,
                                 "Set ." + mCategory.get(mModeIndex).mName
                                  + " exception.", Toast.LENGTH_LONG)
@@ -523,7 +523,7 @@ public class TouchScreenSettings extends Activity implements OnClickListener {
 
             int ret = TouchScreenShellExe.execCommand(sFirstCommand);
 
-            Log.v("@M_" + TAG, "write tpd_mode result:"
+            Xlog.v(TAG, "write tpd_mode result:"
                     + TouchScreenShellExe.getOutput());
             if (0 == ret) {
                 Toast.makeText(this, "write tpd_mode 2 success.",
@@ -536,7 +536,7 @@ public class TouchScreenSettings extends Activity implements OnClickListener {
 //                return;
             }
         } catch (IOException e) {
-            Log.i("@M_" + TAG, e.toString());
+            Xlog.i(TAG, e.toString());
             Toast.makeText(this, "write tpd_mode 2  exception.",
                     Toast.LENGTH_SHORT).show();
 //            setLastError(ERR_ERR);

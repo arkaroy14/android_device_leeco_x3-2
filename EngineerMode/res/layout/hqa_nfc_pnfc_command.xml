@@ -22,7 +22,6 @@
             android:id="@+id/hqa_pnfc_et_pnfc"
             android:layout_width="90pt"
             android:layout_height="wrap_content"
-            android:singleLine="true"
             android:layout_marginLeft="35pt" >
         </EditText>
 

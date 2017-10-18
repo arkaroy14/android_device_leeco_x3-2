@@ -28,8 +28,8 @@ PRODUCT_PACKAGES += \
 
 # Camera
 PRODUCT_PACKAGES += \
-	Snap \
 	Camera2 \
+	Snap \
 	libcamera_parameters_ext
 
 # Charger
@@ -301,8 +301,9 @@ PRODUCT_PACKAGES += \
 	libm4u
 
 # Engineering mode
-#PRODUCT_PACKAGES += \
-#EngineerMode
+PRODUCT_PACKAGES += \
+EngineerMode \
+ims
 
 # Vulkan
 PRODUCT_COPY_FILES += \

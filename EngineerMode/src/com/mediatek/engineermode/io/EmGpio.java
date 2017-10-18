@@ -71,7 +71,7 @@
 package com.mediatek.engineermode.io;
 import com.mediatek.engineermode.emsvr.AFMFunctionCallEx;
 import com.mediatek.engineermode.emsvr.FunctionReturn;
-import android.util.Log;
+import com.mediatek.xlog.Xlog;
 public class EmGpio {
     private static final String RESULT_ERROR = "ERROR";
     private static final String RESULT_SUCCESS = "SUCCESS";
@@ -109,12 +109,12 @@ public class EmGpio {
     public static int newGetCurrent(int hostNumber, int opcode) {
         String response = runCmdInNative(
                 AFMFunctionCallEx.FUNCTION_EM_MSDC_GET_CURRENT, 2, hostNumber, opcode);
-        Log.d("@M_" + TAG, "newGetCurrent: " + response);
+        Xlog.d(TAG, "newGetCurrent: " + response);
         int idx = -1;
         try {
             idx = Integer.parseInt(response);
         } catch (NumberFormatException e) {
-            Log.i("@M_" + TAG, "parseInt failed--invalid number!");
+            Xlog.i(TAG, "parseInt failed--invalid number!");
         }
         return idx;
     }
@@ -151,11 +151,11 @@ public class EmGpio {
                 build.append(r.mReturnString);
             } while (r.mReturnCode == AFMFunctionCallEx.RESULT_CONTINUE);
             if (r.mReturnCode == AFMFunctionCallEx.RESULT_IO_ERR) {
-                Log.d("@M_" + TAG, "AFMFunctionCallEx: RESULT_IO_ERR");
+                Xlog.d(TAG, "AFMFunctionCallEx: RESULT_IO_ERR");
                 build.replace(0, build.length(), RESULT_ERROR);
             }
         } else {
-            Log.d("@M_" + TAG, "AFMFunctionCallEx return false");
+            Xlog.d(TAG, "AFMFunctionCallEx return false");
             build.append(RESULT_ERROR);
         }
         return build.toString();

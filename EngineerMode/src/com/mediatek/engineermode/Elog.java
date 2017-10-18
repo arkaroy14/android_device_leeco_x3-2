@@ -37,10 +37,10 @@
 
 package com.mediatek.engineermode;
 
-import android.util.Log;
+import com.mediatek.xlog.Xlog;
 
 /**
- * Description: a help class for printing log.
+ * Description: a help class for printing log by Xlog.
  *
  * @author mtk54043
  *
@@ -56,7 +56,7 @@ public class Elog {
      *            Log' content
      */
     public static final void v(String tag, String content) {
-        Log.v("@M_" + tag, content);
+        Xlog.v(tag, content);
     }
 
     /**
@@ -67,7 +67,7 @@ public class Elog {
      *            Log' content
      */
     public static final void i(String tag, String content) {
-        Log.i("@M_" + tag, content);
+        Xlog.i(tag, content);
     }
 
     /**
@@ -78,7 +78,7 @@ public class Elog {
      *            Log' content
      */
     public static final void w(String tag, String content) {
-        Log.w("@M_" + tag, content);
+        Xlog.w(tag, content);
     }
 
     /**
@@ -89,7 +89,7 @@ public class Elog {
      *            Log' content
      */
     public static final void e(String tag, String content) {
-        Log.e("@M_" + tag, content);
+        Xlog.e(tag, content);
     }
 
     /**
@@ -100,6 +100,6 @@ public class Elog {
      *            Log' content
      */
     public static final void d(String tag, String content) {
-        Log.d("@M_" + tag, content);
+        Xlog.d(tag, content);
     }
 }

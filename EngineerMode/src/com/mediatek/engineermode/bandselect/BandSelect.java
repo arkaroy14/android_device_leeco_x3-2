@@ -38,7 +38,6 @@ package com.mediatek.engineermode.bandselect;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -51,7 +50,6 @@ import android.os.ServiceManager;
 import android.os.SystemProperties;
 import android.telephony.RadioAccessFamily;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -64,7 +62,9 @@ import com.android.internal.telephony.Phone;
 import com.android.internal.telephony.PhoneConstants;
 import com.android.internal.telephony.PhoneFactory;
 import com.mediatek.engineermode.FeatureSupport;
+import com.mediatek.engineermode.ModemCategory;
 import com.mediatek.engineermode.R;
+import com.mediatek.xlog.Xlog;
 
 import java.util.ArrayList;
 
@@ -88,7 +88,6 @@ public class BandSelect extends Activity implements OnClickListener {
     private static final int INDEX_BAND_MAX = 5;
 
     private Phone mPhone = null;
-    private Phone mCdmaPhone = null;
 
     private final ArrayList<BandModeMap> mModeArray = new ArrayList<BandModeMap>();
     private final ArrayList<BandModeMap> mCdmaModeArray = new ArrayList<BandModeMap>();
@@ -98,8 +97,6 @@ public class BandSelect extends Activity implements OnClickListener {
 
     private boolean mIsThisAlive = false;
     private int mSimType;
-    private boolean mSettingCdma = false;
-    private boolean mSettingLte = false;
 
     private final Handler mResponseHander = new Handler() {
 
@@ -130,11 +127,8 @@ public class BandSelect extends Activity implements OnClickListener {
                 break;
             case BandModeContent.EVENT_SET:
                 asyncResult = (AsyncResult) msg.obj;
-                mSettingLte = false;
                 if (asyncResult.exception == null) {
-                    if (!mSettingCdma && !mSettingLte) {
-                        showDialog(BandModeContent.EVENT_SET_OK);
-                    }
+                    showDialog(BandModeContent.EVENT_SET_OK);
                 } else {
                     showDialog(BandModeContent.EVENT_SET_FAIL);
                 }
@@ -151,11 +145,8 @@ public class BandSelect extends Activity implements OnClickListener {
                 break;
             case BandModeContent.EVENT_SET_CDMA:
                 asyncResult = (AsyncResult) msg.obj;
-                mSettingCdma = false;
                 if (asyncResult.exception == null) {
-                    if (!mSettingCdma && !mSettingLte) {
-                        showDialog(BandModeContent.EVENT_SET_OK);
-                    }
+                    showDialog(BandModeContent.EVENT_SET_OK);
                 } else {
                     showDialog(BandModeContent.EVENT_SET_FAIL);
                 }
@@ -167,14 +158,28 @@ public class BandSelect extends Activity implements OnClickListener {
     };
 
     private static int getModemType(int simType) {
+        String property = GSM_BASEBAND;
+        if (FeatureSupport.isSupported(FeatureSupport.FK_DT_SUPPORT)
+                && simType == PhoneConstants.SIM_ID_2) {
+            property = SystemProperties.get("gsm.baseband.capability.md2");
+        }
+        String networkType = SystemProperties.get(property);
         int mode;
-        final int mask = 1;
-        if (1 == mask) {
-            mode = WCDMA;
-        } else if (2 == mask) {
-            mode = TDSCDMA;
-        } else {
+        if (networkType == null) {
             mode = 0;
+        } else {
+            try {
+                final int mask = Integer.valueOf(networkType);
+                if ((mask & WCDMA) != 0) {
+                    mode = WCDMA;
+                } else if ((mask & TDSCDMA) != 0) {
+                    mode = TDSCDMA;
+                } else {
+                    mode = 0;
+                }
+            } catch (NumberFormatException e) {
+                mode = 0;
+            }
         }
         return mode;
     }
@@ -239,8 +244,44 @@ public class BandSelect extends Activity implements OnClickListener {
                 ITelephony.Stub.asInterface(ServiceManager.getService("phone"));
         // For L version, use gsm.baseband.capability to detect TD/FD, use SIM switch API to
         // detect 2G/3G
-        if (mSimType == PhoneConstants.SIM_ID_1) {
-
+        if (modemType == TDSCDMA && isCapabilitySim(mSimType)) {
+            setContentView(R.layout.tddbandselect);
+            mBtnSet = (Button) findViewById(R.id.TDD_Btn_Set);
+            mBtnReset = (Button) findViewById(R.id.TDD_Btn_Reset);
+            mModeArray.add(new BandModeMap(
+                    (CheckBox) findViewById(R.id.TDD_GSM_EGSM900),
+                    INDEX_GSM_BAND, BandModeContent.GSM_EGSM900_BIT));
+            mModeArray.add(new BandModeMap(
+                    (CheckBox) findViewById(R.id.TDD_GSM_DCS1800),
+                    INDEX_GSM_BAND, BandModeContent.GSM_DCS1800_BIT));
+            mModeArray.add(new BandModeMap(
+                    (CheckBox) findViewById(R.id.TDD_GSM_PCS1900),
+                    INDEX_GSM_BAND, BandModeContent.GSM_PCS1900_BIT));
+            mModeArray.add(new BandModeMap(
+                    (CheckBox) findViewById(R.id.TDD_GSM_GSM850),
+                    INDEX_GSM_BAND, BandModeContent.GSM_GSM850_BIT));
+            mModeArray.add(new BandModeMap(
+                    (CheckBox) findViewById(R.id.TDD_UMTS_BAND_I),
+                    INDEX_UMTS_BAND, BandModeContent.UMTS_BAND_I_BIT));
+            mModeArray.add(new BandModeMap(
+                    (CheckBox) findViewById(R.id.TDD_UMTS_BAND_II),
+                    INDEX_UMTS_BAND, BandModeContent.UMTS_BAND_II_BIT));
+            mModeArray.add(new BandModeMap(
+                    (CheckBox) findViewById(R.id.TDD_UMTS_BAND_III),
+                    INDEX_UMTS_BAND, BandModeContent.UMTS_BAND_III_BIT));
+            mModeArray.add(new BandModeMap(
+                    (CheckBox) findViewById(R.id.TDD_UMTS_BAND_IV),
+                    INDEX_UMTS_BAND, BandModeContent.UMTS_BAND_IV_BIT));
+            mModeArray.add(new BandModeMap(
+                    (CheckBox) findViewById(R.id.TDD_UMTS_BAND_V),
+                    INDEX_UMTS_BAND, BandModeContent.UMTS_BAND_V_BIT));
+            mModeArray.add(new BandModeMap(
+                    (CheckBox) findViewById(R.id.TDD_UMTS_BAND_VI),
+                    INDEX_UMTS_BAND, BandModeContent.UMTS_BAND_VI_BIT));
+            if (FeatureSupport.isSupported(FeatureSupport.FK_LTE_SUPPORT)) {
+                initLteArray();
+            }
+        } else if (modemType == WCDMA && isCapabilitySim(mSimType)) {
             setContentView(R.layout.bandselect);
             mBtnSet = (Button) findViewById(R.id.BandSel_Btn_Set);
             mBtnReset = (Button) findViewById(R.id.BandSel_Btn_Reset);
@@ -306,7 +347,10 @@ public class BandSelect extends Activity implements OnClickListener {
                     (CheckBox) findViewById(R.id.bandmodesim2_GSM_GSM850),
                     INDEX_GSM_BAND, BandModeContent.GSM_GSM850_BIT));
         }
-
+        if (mSimType == PhoneConstants.SIM_ID_1 && ModemCategory.isCdma()) {
+            findViewById(R.id.TableLayout01).setVisibility(View.GONE);
+            initCdmaArray();
+        }
 
         mIsThisAlive = true;
 
@@ -318,23 +362,25 @@ public class BandSelect extends Activity implements OnClickListener {
     protected void onResume() {
         super.onResume();
         if (TelephonyManager.getDefault().getPhoneCount() > 1) {
-            Log.v("@M_" + LOG_TAG, "Gemini");
+            Xlog.v(LOG_TAG, "Gemini");
             mPhone = PhoneFactory.getPhone(mSimType);
         } else {
-            Log.v("@M_" + LOG_TAG, "Single");
+            Xlog.v(LOG_TAG, "Single");
             mPhone = PhoneFactory.getDefaultPhone();
         }
-
+        if (mSimType == PhoneConstants.SIM_ID_1 && ModemCategory.isCdma()) {
+            queryCurrentCdmaMode();
+        } else {
             querySupportMode();
             queryCurrentMode();
-        
+        }
     }
 
     private void setMode(AsyncResult aSyncResult, int msg) {
         final String[] result = (String[]) aSyncResult.result;
 
         for (final String value : result) {
-            Log.v("@M_" + LOG_TAG, "--.>" + value);
+            Xlog.v(LOG_TAG, "--.>" + value);
             final String splitString = value.substring(BandModeContent.SAME_COMMAND
                     .length());
             final String[] getDigitalVal = splitString.split(",");
@@ -368,7 +414,7 @@ public class BandSelect extends Activity implements OnClickListener {
     private void querySupportMode() {
         final String[] modeString = {BandModeContent.QUERY_SUPPORT_COMMAND,
                 BandModeContent.SAME_COMMAND};
-        Log.v("@M_" + LOG_TAG, "AT String:" + modeString[0]);
+        Xlog.v(LOG_TAG, "AT String:" + modeString[0]);
         sendATCommand(modeString, BandModeContent.EVENT_QUERY_SUPPORTED);
     }
 
@@ -378,7 +424,7 @@ public class BandSelect extends Activity implements OnClickListener {
     private void queryCurrentMode() {
         final String[] modeString = {BandModeContent.QUERY_CURRENT_COMMAND,
                 BandModeContent.SAME_COMMAND};
-        Log.v("@M_" + LOG_TAG, "AT String:" + modeString[0]);
+        Xlog.v(LOG_TAG, "AT String:" + modeString[0]);
         sendATCommand(modeString, BandModeContent.EVENT_QUERY_CURRENT);
     }
 
@@ -386,9 +432,7 @@ public class BandSelect extends Activity implements OnClickListener {
      * Query Modem is being used band modes.
      */
     private void sendATCommand(String[] atCommand, int msg) {
-        if (mPhone != null) {
-            mPhone.invokeOemRilRequestStrings(atCommand, mResponseHander.obtainMessage(msg));
-        }
+        mPhone.invokeOemRilRequestStrings(atCommand, mResponseHander.obtainMessage(msg));
     }
 
     /**
@@ -422,10 +466,9 @@ public class BandSelect extends Activity implements OnClickListener {
         if (FeatureSupport.isSupported(FeatureSupport.FK_LTE_SUPPORT)) {
             modeString[0] += "," + values[2] + "," + values[3];
         }
-        Log.v("@M_" + LOG_TAG, "AT String:" + modeString[0]);
+        Xlog.v(LOG_TAG, "AT String:" + modeString[0]);
         sendATCommand(modeString, BandModeContent.EVENT_SET);
         setCurrentMode(values);
-        mSettingLte = true;
     }
 
     /**
@@ -512,9 +555,11 @@ public class BandSelect extends Activity implements OnClickListener {
      */
     public void onClick(final View arg0) {
         if (arg0.getId() == mBtnSet.getId()) {
-
+            if (mSimType == PhoneConstants.SIM_ID_1 && ModemCategory.isCdma()) {
+                setBandModeCdma(getValFromBoxCdma());
+            } else {
                 setBandMode(getValFromBox());
-            
+            }
         } else if (arg0.getId() == mBtnReset.getId()) {
             showDialog(BandModeContent.EVENT_RESET);
         }
@@ -545,9 +590,11 @@ public class BandSelect extends Activity implements OnClickListener {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-  
+                        if (mSimType == PhoneConstants.SIM_ID_1 && ModemCategory.isCdma()) {
+                            setBandModeCdma(getDefaultValueCdma());
+                        } else {
                             setBandMode(getDefaultValue());
-                       
+                        }
                         dialog.dismiss();
                     }
                 }
@@ -578,6 +625,21 @@ public class BandSelect extends Activity implements OnClickListener {
         super.onDestroy();
     }
 
+    private static boolean isCapabilitySim(int i) {
+        ITelephony iTelephony =
+                ITelephony.Stub.asInterface(ServiceManager.getService("phone"));
+        if (iTelephony == null) {
+            return false;
+        }
+        try {
+            return (iTelephony.getRadioAccessFamily(i) & (RadioAccessFamily.RAF_UMTS
+                    | RadioAccessFamily.RAF_LTE)) > 0;
+        } catch (RemoteException e) {
+            Xlog.e(LOG_TAG, e.getMessage());
+            return false;
+        }
+    }
+
     private void initCdmaArray() {
         findViewById(R.id.TableLayout03).setVisibility(View.VISIBLE);
         ArrayList<CheckBox> checkBox = addCheckboxToTable(R.id.TableLayout03,
@@ -590,14 +652,14 @@ public class BandSelect extends Activity implements OnClickListener {
     private void queryCurrentCdmaMode() {
         final String[] modeString = {BandModeContent.QUERY_CURRENT_COMMAND_CDMA,
                 BandModeContent.SAME_COMMAND_CDMA};
-        Log.v("@M_" + LOG_TAG, "AT String:" + modeString[0]);
+        Xlog.v(LOG_TAG, "AT String:" + modeString[0]);
         sendATCommandCdma(modeString, BandModeContent.EVENT_QUERY_CURRENT_CDMA);
     }
 
     private void setModeCdma(AsyncResult aSyncResult, int msg) {
         final String[] result = (String[]) aSyncResult.result;
         for (final String string : result) {
-            Log.v("@M_" + LOG_TAG, "--.>" + string);
+            Xlog.v(LOG_TAG, "--.>" + string);
             String splitString = string.substring(BandModeContent.SAME_COMMAND_CDMA.length());
             if (msg == BandModeContent.EVENT_QUERY_CURRENT_CDMA) {
                 long value = 0;
@@ -617,15 +679,14 @@ public class BandSelect extends Activity implements OnClickListener {
     }
 
     private void sendATCommandCdma(String[] atCommand, int msg) {
-        mCdmaPhone.invokeOemRilRequestStrings(atCommand, mResponseHander.obtainMessage(msg));
+        mPhone.invokeOemRilRequestStrings(atCommand, mResponseHander.obtainMessage(msg));
     }
 
     private void setBandModeCdma(final long value) {
         String[] modeString = {BandModeContent.SET_COMMAND_CDMA + value, "" };
-        Log.v("@M_" + LOG_TAG, "AT String:" + modeString[0]);
+        Xlog.v(LOG_TAG, "AT String:" + modeString[0]);
         sendATCommandCdma(modeString, BandModeContent.EVENT_SET_CDMA);
         setCurrentModeCdma(value);
-        mSettingCdma = true;
     }
 
     private long getValFromBoxCdma() {
@@ -652,7 +713,7 @@ public class BandSelect extends Activity implements OnClickListener {
 
     private void setSupportedModeCdma(final long value) {
         for (final BandModeMap m : mCdmaModeArray) {
-            Log.v("@M_" + LOG_TAG, "a " + value + m.mBit);
+            Xlog.v(LOG_TAG, "a " + value + m.mBit);
             if ((value & (1L << m.mBit)) == 0) {
                 m.mChkBox.setEnabled(false);
             } else {

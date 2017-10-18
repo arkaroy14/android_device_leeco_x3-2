@@ -82,6 +82,7 @@ public class ChipSupport {
     public static final int MTK_6577_SUPPORT = 8;
     public static final int MTK_6589_SUPPORT = 16;
     public static final int MTK_6582_SUPPORT = 18;
+    public static final int MTK_6580_SUPPORT = 19;
     public static final int MTK_6572_SUPPORT = 32;
     public static final int MTK_8135_SUPPORT = 20;
     public static final int MTK_8127_SUPPORT = 22;
@@ -92,9 +93,6 @@ public class ChipSupport {
     public static final int MTK_6795_SUPPORT = 65;
     public static final int MTK_6735_SUPPORT = 66;
     public static final int MTK_8163_SUPPORT = 67;
-    public static final int MTK_6580_SUPPORT = 68;
-    public static final int MTK_6755_SUPPORT = 69;
-    public static final int MTK_6797_SUPPORT = 70;
 
     /**
      * Feature support.
@@ -109,7 +107,6 @@ public class ChipSupport {
     public static final int MTK_WLAN_SUPPORT = 7;
     public static final int MTK_TTY_SUPPORT = 8;
     public static final int MTK_NFC_SUPPORT = 9;
-    public static final int MTK_AUDIO_TUNING_TOOL_V2_1 = 10;
 
     public static final int[] CHIP_657X_SERIES_NEW = {MTK_6571_SUPPORT, MTK_6572_SUPPORT};
     public static final int[] CHIP_64BIT_SUPPORT = {MTK_6752_SUPPORT, MTK_6795_SUPPORT,

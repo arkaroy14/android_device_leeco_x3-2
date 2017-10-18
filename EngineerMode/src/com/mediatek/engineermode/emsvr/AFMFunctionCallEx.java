@@ -39,7 +39,7 @@
  */
 package com.mediatek.engineermode.emsvr;
 
-import android.util.Log;
+import com.mediatek.xlog.Xlog;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -96,7 +96,7 @@ public class AFMFunctionCallEx {
             mSocket.writeFunctionNo(String.valueOf(functionId));
             result = true;
         } catch (IOException e) {
-            Log.w("@M_" + TAG, "StartCallFunctionStringReturnEXP " + e.getMessage());
+            Xlog.w(TAG, "StartCallFunctionStringReturnEXP " + e.getMessage());
             result = false;
         }
         return result;

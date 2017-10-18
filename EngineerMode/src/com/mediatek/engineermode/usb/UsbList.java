@@ -38,7 +38,6 @@ package com.mediatek.engineermode.usb;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -47,6 +46,7 @@ import android.widget.ListView;
 
 
 import com.mediatek.engineermode.R;
+import com.mediatek.xlog.Xlog;
 import com.mediatek.engineermode.ChipSupport;
 import java.util.ArrayList;
 
@@ -89,7 +89,7 @@ public class UsbList extends Activity implements OnItemClickListener {
     }
 
     public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-        Log.d("@M_" + TAG, "-->onItemClick + arg2 " + arg2);
+        Xlog.d(TAG, "-->onItemClick + arg2 " + arg2);
         Intent intent = null;
         if (getString(R.string.usb_phy_tuning).equals(mItemList.get(arg2))) {
             intent = new Intent(this, UsbPhyTuning.class);
@@ -113,7 +113,7 @@ public class UsbList extends Activity implements OnItemClickListener {
             }
         }
         if (intent == null) {
-            Log.d("@M_" + TAG, "Invalid intent: null");
+            Xlog.d(TAG, "Invalid intent: null");
             return;
         }
         startActivity(intent);

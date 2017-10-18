@@ -39,7 +39,6 @@ package com.mediatek.engineermode.io;
 
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -50,6 +49,7 @@ import android.widget.Spinner;
 
 import com.mediatek.engineermode.ChipSupport;
 import com.mediatek.engineermode.R;
+import com.mediatek.xlog.Xlog;
 
 import java.util.ArrayList;
 
@@ -128,7 +128,7 @@ public class MsdcHopSet extends MsdcTest implements OnClickListener {
         if (arg0.getId() == mBtnGet.getId()) {
 
             int idx = EmGpio.newGetCurrent(mHostIndex, 1);
-            Log.i("@M_" + TAG, "get Data: " + idx);
+            Xlog.i(TAG, "get Data: " + idx);
             if (idx != -1) {
                 int mHopbitIdx = (idx >> OFFSET_HOP_BIT) & DATA_BIT;
                 int mHoptimeIdx = (idx >> OFFSET_TIME_BIT) & DATA_BIT;
@@ -170,7 +170,7 @@ public class MsdcHopSet extends MsdcTest implements OnClickListener {
         }
 
         public void onNothingSelected(AdapterView<?> arg0) {
-            Log.v("@M_" + TAG, "Spinner nothing selected");
+            Xlog.v(TAG, "Spinner nothing selected");
         }
 
     };

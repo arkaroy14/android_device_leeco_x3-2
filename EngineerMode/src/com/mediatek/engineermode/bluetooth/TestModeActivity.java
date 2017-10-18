@@ -49,7 +49,6 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.text.Html;
-import android.util.Log;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -57,6 +56,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mediatek.engineermode.R;
+import com.mediatek.xlog.Xlog;
 
 import java.io.IOException;
 
@@ -121,7 +121,7 @@ public class TestModeActivity extends Activity implements
                 try {
                     v = Integer.valueOf(val);
                 } catch (NumberFormatException e) {
-                    Log.i("@M_" + TAG, e.getMessage());
+                    Xlog.i(TAG, e.getMessage());
                 }
 
                 if (v > DEFAULT_INT) {
@@ -194,13 +194,13 @@ public class TestModeActivity extends Activity implements
      */
     public void onCancel(DialogInterface dialog) {
         // request that the service stop the query with this callback object.
-        Log.v("@M_" + TAG, "onCancel");
+        Xlog.v(TAG, "onCancel");
         finish();
     }
 
     @Override
     public void onBackPressed() {
-        Log.v("@M_" + TAG, "-->onBackPressed ");
+        Xlog.v(TAG, "-->onBackPressed ");
 
         if (mWorkHandler != null && mBtTest != null) {
             showDialog(DIALOG_BT_STOP);
@@ -212,7 +212,7 @@ public class TestModeActivity extends Activity implements
 
     @Override
     public void onDestroy() {
-        Log.v("@M_" + TAG, "-->onDestroy");
+        Xlog.v(TAG, "-->onDestroy");
         // super.onDestroy();
         if (mWorkThread != null) {
             mWorkThread.quit();
@@ -270,9 +270,9 @@ public class TestModeActivity extends Activity implements
                 final Runtime rt = Runtime.getRuntime();
                 try {
                     rt.exec(RUN_SU);
-                    Log.v("@M_" + TAG, "excute su command.");
+                    Xlog.v(TAG, "excute su command.");
                 } catch (IOException e) {
-                    Log.v("@M_" + TAG, e.getMessage());
+                    Xlog.v(TAG, e.getMessage());
                 }
 
                 mBtTest = new BtTest();
@@ -282,38 +282,38 @@ public class TestModeActivity extends Activity implements
                 try {
                     tmpValue = Integer.valueOf(val);
                 } catch (NumberFormatException e) {
-                    Log.i("@M_" + TAG, e.getMessage());
+                    Xlog.i(TAG, e.getMessage());
                 }
 
                 mBtTest.setPower(tmpValue);
-                Log.i("@M_" + TAG, "power set " + val);
+                Xlog.i(TAG, "power set " + val);
                 if (RETURN_FAIL == mBtTest.doBtTest(BT_TEST_1)) {
                     // if (-1 == mBtTest.doBtTest(1)) {
-                    Log.v("@M_" + TAG, "transmit data failed.");
+                    Xlog.v(TAG, "transmit data failed.");
                     // removeDialog(DIALOG_BLUETOOTH_INIT);
                     mUiHandler.sendEmptyMessage(BT_TEST_FAIL);
                 } else {
                     mUiHandler.sendEmptyMessage(BT_TEST_SUCCESS);
                 }
 
-                Log.i("@M_" + TAG, "pollingStart");
+                Xlog.i(TAG, "pollingStart");
                 mBtTest.pollingStart();
 
             } else if (msg.what == OP_DO_TEST_2 || msg.what == OP_DO_TEST_STOP) {
                 final Runtime rt = Runtime.getRuntime();
                 try {
                     rt.exec(RUN_SU);
-                    Log.i("@M_" + TAG, "excute su command.");
+                    Xlog.i(TAG, "excute su command.");
                 } catch (IOException e) {
-                    Log.v("@M_" + TAG, e.getMessage());
+                    Xlog.v(TAG, e.getMessage());
                 }
 
                 if (mBtTest != null) {
-                    Log.i("@M_" + TAG, "pollingStop");
+                    Xlog.i(TAG, "pollingStop");
                     mBtTest.pollingStop();
                     if (RETURN_FAIL == mBtTest.doBtTest(BT_TEST_2)) {
                         // if (-1 == mBtTest.doBtTest(2)) {
-                        Log.i("@M_" + TAG, "transmit data failed 1.");
+                        Xlog.i(TAG, "transmit data failed 1.");
                     }
                     mBtTest = null;
                 }

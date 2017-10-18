@@ -34,15 +34,11 @@ public class FeatureSupport {
     public static final String FK_CT4GREG_APP = "ro.mtk_ct4greg_app";
     public static final String FK_C2K_SUPPORT = "ro.mtk_c2k_support";
     public static final String FK_SVLTE_SUPPORT = "ro.mtk_svlte_support";
-    public static final String FK_SRLTE_SUPPORT = "ro.mtk_srlte_support";
     public static final String FK_C2K_IRAT_SUPPORT = "ro.c2k.irat.support";
     public static final String FK_C2K_MD_IRAT_SUPPORT = "ro.c2k.md.irat.support";
-    public static final String FK_VILTE_SUPPORT = "ro.mtk_vilte_support";
-    public static final String FK_MTK_WEARABLE_PLATFORM = "ro.mtk_wearable_platform";
 
     public static final String PK_CDS_EM = "com.mediatek.connectivity";
     public static final String ENG_LOAD = "eng";
-    public static final String USER_LOAD = "user";
 
     public static boolean isSupported(String featureKey) {
         return SUPPORTED.equals(SystemProperties.get(featureKey));
@@ -71,9 +67,5 @@ public class FeatureSupport {
             }
         }
         return false;
-    }
-
-    public static boolean isUserLoad() {
-        return USER_LOAD.equals(SystemProperties.get("ro.build.type"));
     }
 }

@@ -39,8 +39,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.util.Log;
 
+import com.mediatek.xlog.Xlog;
+/* Vanzo:tanglei on: Mon, 19 Jan 2015 10:29:53 +0800
+ */
+import com.mediatek.engineermode.sensor.PSensorCalibrationSelect;
+// End of Vanzo:tanglei
 
 public final class EngineerModeReceiver extends BroadcastReceiver {
 
@@ -48,26 +52,44 @@ public final class EngineerModeReceiver extends BroadcastReceiver {
     private static final String SECRET_CODE_ACTION = "android.provider.Telephony.SECRET_CODE";
     // process *#*#3646633#*#*
     private final Uri mEmUri = Uri.parse("android_secret_code://3646633");
+/* Vanzo:tanglei on: Mon, 19 Jan 2015 10:30:21 +0800
+ */
+    private final Uri mDiUri = Uri.parse("android_secret_code://9646633");//Device Info
+    private final Uri mPscUri = Uri.parse("android_secret_code://772");//PSensor Calibration
+// End of Vanzo:tanglei
 
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction() == null) {
-            Log.i("@M_" + TAG, "Null action");
+            Xlog.i(TAG, "Null action");
             return;
         }
         if (intent.getAction().equals(SECRET_CODE_ACTION)) {
             Uri uri = intent.getData();
-            Log.i("@M_" + TAG, "getIntent success in if");
+            Xlog.i(TAG, "getIntent success in if");
             if (uri.equals(mEmUri)) {
                 Intent intentEm = new Intent(context, EngineerMode.class);
                 intentEm.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                Log.i("@M_" + TAG, "Before start EM activity");
+                Xlog.i(TAG, "Before start EM activity");
                 context.startActivity(intentEm);
+/* Vanzo:tanglei on: Mon, 19 Jan 2015 10:31:22 +0800
+ */
+            } else if (uri.equals(mDiUri)) {
+                Intent intentDi = new Intent(context, DeviceInfoSettings.class);
+                intentDi.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                Xlog.i(TAG, "Before start Device info activity");
+                context.startActivity(intentDi);
+            } else if (uri.equals(mPscUri)) {
+                Intent intentPsc = new Intent(context, PSensorCalibrationSelect.class);
+                intentPsc.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                Xlog.i(TAG, "Before start Psensor Calibration activity");
+                context.startActivity(intentPsc);
+// End of Vanzo:tanglei
             } else {
-                Log.i("@M_" + TAG, "No matched URI!");
+                Xlog.i(TAG, "No matched URI!");
             }
         } else {
-            Log.i("@M_" + TAG, "Not SECRET_CODE_ACTION!");
+            Xlog.i(TAG, "Not SECRET_CODE_ACTION!");
         }
     }
 }

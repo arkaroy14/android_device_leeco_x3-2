@@ -42,7 +42,6 @@ import android.os.Bundle;
 import android.os.SystemProperties;
 
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CheckBox;
@@ -50,6 +49,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mediatek.engineermode.R;
+import com.mediatek.xlog.Xlog;
 
 /**
  * Do BT debug feature test.
@@ -91,7 +91,7 @@ public class BtDebugFeatureActivity extends Activity implements OnClickListener 
             //SystemProperties.set(KEY_DEBUG_FEATURE, Long.toString(value));
             Toast.makeText(this, "The change will be valid after you restart phone",
                     Toast.LENGTH_LONG).show();
-            Log.v("@M_" + TAG, "DebugFeature isChecked--" + mChecked.isChecked());
+            Xlog.v(TAG, "DebugFeature isChecked--" + mChecked.isChecked());
         }
     }
 }

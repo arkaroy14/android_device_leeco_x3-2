@@ -5,7 +5,6 @@ import android.content.Intent;
 
 import com.mediatek.engineermode.Elog;
 
-import java.nio.ByteBuffer;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -70,7 +69,7 @@ public class NfcCommandHandler {
                         Elog.w(NfcMainPage.TAG, "[NfcCommandHandler] mCommandQueue is null.");
                     } else {
                         NfcCommand command = mCommandQueue.take();
-                        processCommand(command);
+                        processCommand(command); // 取出一个命令，调用processCommand解析命令并采取相应动作
                     }
                 } catch (InterruptedException ex) {
                     Elog.w(NfcMainPage.TAG, "[NfcCommandHandler]Consumer InterruptedException: " + ex.getMessage());
@@ -102,8 +101,7 @@ public class NfcCommandHandler {
     private void processCommand(NfcCommand receiveData) {
         Intent intent = new Intent();
         intent.setAction(NfcCommand.ACTION_PRE + receiveData.getMessageType());
-        ByteBuffer content = receiveData.getMessageContent();
-        intent.putExtra(NfcCommand.MESSAGE_CONTENT_KEY, (content == null) ? null : content.array());
+        intent.putExtra(NfcCommand.MESSAGE_CONTENT_KEY, receiveData.getMessageContent().array());
         mContext.sendBroadcast(intent);
     }
 }

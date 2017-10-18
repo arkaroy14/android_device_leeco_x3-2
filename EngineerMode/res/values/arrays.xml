@@ -153,8 +153,12 @@
         <item>CMW500</item>
     </string-array>
 
-    <string-array name="modem_test_c2k_options">
-        <item>NONE</item>
+    <string-array name="modem_test_fta_options_c2k">
+        <item>ANITE</item>
+        <item>CRTUG</item>
+        <item>CRTUW</item>
+        <item>ANRITSU</item>
+        <item>CMW500</item>
         <item>SPIRENT</item>
     </string-array>
     
@@ -240,36 +244,11 @@
         <item>LoudSpeaker Mode</item>
         <item>Headset_LoudSpeaker Mode</item>
         <item>Speech Enhancement</item>
-        <!-- <item>Debug Info</item>
+        <item>Debug Info</item>
         <item>Debug Session</item>
         <item>Speech Logger</item>
         <item>Audio Logger</item>
-        <item>Audio Wake Lock</item> -->
-    </string-array>
-    <string-array name="Audio_GetAudioCommandSpinner">
-        <item>0x64</item>
-        <item>0x66</item>
-        <item>0x68</item>
-    </string-array>
-    
-    <string-array name="Audio_SetAudioCommandSpinner">
-        <item>0x99, 1</item>
-        <item>0x98, 1</item>
-    </string-array>
-    
-       <string-array name="Audio_GetAudioParameterSpinner">
-        <item>GetFmEnable</item>
-        <item>GetFmTxEnable</item>
-        <item>DUAL_MIC_GET_GAIN</item>
-
-    </string-array>
-    
-    <string-array name="Audio_SetAudioParameterSpinner">
-        <item>TDM_Record=0</item>
-        <item>SET_MODE=0</item>
-        <item>HAHA=0</item>
-        <item>Set_SpeechCall_DL_Mute=0</item>
-        <item>SetFmVolume=0</item>
+        <item>Audio Wake Lock</item>
     </string-array>
     <string-array name="mode_type0">
         <item>Sip</item>
@@ -653,33 +632,33 @@
         <item>Select None</item>
         <item>Select All</item>
         <item>Auto</item>
-        <item>ISO 1x</item>
-        <item>ISO 1.5x</item>
-        <item>ISO 2x</item>
-        <item>ISO 3x</item>
-        <item>ISO 4x</item>
-        <item>ISO 6x</item>
-        <item>ISO 8x</item>
-        <item>ISO 12x</item>
-        <item>ISO 16x</item>
-        <item>ISO 20x</item>
-        <item>ISO 24x</item>
-        <item>ISO 28x</item>
-        <item>ISO 32x</item>
+        <item>ISO100</item>
+        <item>ISO150</item>
+        <item>ISO200</item>
+        <item>ISO300</item>
+        <item>ISO400</item>
+        <item>ISO600</item>
+        <item>ISO800</item>
+        <item>ISO1200</item>
+        <item>ISO1600</item>
+        <item>ISO2000</item>
+        <item>ISO2400</item>
+        <item>ISO2800</item>
+        <item>ISO3200</item>
     </string-array>
     <string-array name="auto_calib_special_iso">
         <item>Auto</item>
-        <item>ISO 1x</item>
-        <item>ISO 1.5x</item>
-        <item>ISO 2x</item>
-        <item>ISO 3x</item>
-        <item>ISO 4x</item>
-        <item>ISO 6x</item>
-        <item>ISO 8x</item>
-        <item>ISO 12x</item>
-        <item>ISO 16x</item>
-        <item>ISO 24x</item>
-        <item>ISO 32x</item>
+        <item>ISO100</item>
+        <item>ISO150</item>
+        <item>ISO200</item>
+        <item>ISO300</item>
+        <item>ISO400</item>
+        <item>ISO600</item>
+        <item>ISO800</item>
+        <item>ISO1200</item>
+        <item>ISO1600</item>
+        <item>ISO2400</item>
+        <item>ISO3200</item>
     </string-array>
     <string-array name="auto_calib_flicker_type">
         <item>50Hz</item>
@@ -1149,18 +1128,6 @@
 		<item>0</item>
 	</string-array>
 	<!-- CT Device Register end -->
-	
-	<!-- ESN track start -->
-	<string-array name="esn_track_entries">
-		<item>Turn On</item>
-		<item>Turn Off</item>
-	</string-array>
-	<string-array name="esn_track_values">
-		<item>1</item>
-		<item>0</item>
-	</string-array>
-	<!-- ESN track end -->
-	
     <!-- LTE start -->
 	<string-array name="lte_threshold_operation_on_off">
 		<item>Not use (0)</item>
@@ -1242,10 +1209,6 @@
         <item>EMM</item>
         <item>MMDC</item>
         <item>EL1</item>
-        <item>Timer Information</item>
-        <item>TDD TAS</item>
-        <item>GSM TAS</item>
-        <item>WCDMA TAS</item>
     </string-array>
     <!-- LTE end -->
 
@@ -1432,9 +1395,9 @@
         <item>ActiveSetWindow</item>
         <item>NeighborSetWindow</item>
         <item>RemainSetWindow</item>
-        <item>PilotAdd</item>
-        <item>PilotDrop</item>
-        <item>PilotDropTimer</item>
+        <item>T_ADD</item>
+        <item>T_DROP</item>
+        <item>T_tDROP</item>
     </string-array>
     <string-array name="network_info_evdo_active_set">
         <item>PilotPN</item>
@@ -1487,23 +1450,5 @@
     <string-array name="usb_phy_tuning_val_0_1d">
         <item>0</item>
         <item>1</item>
-    </string-array>
-    <string-array name="vilte_video_fps_values">
-        <item>15</item>
-        <item>20</item>
-        <item>30</item>
-    </string-array>
-
-    <string-array name="bypass_names">
-        <item>@string/usb_mode_bypass_ets</item>
-        <item>@string/usb_mode_bypass_modem</item>
-    </string-array>
-    <integer-array name="bypass_codes">
-        <item>8</item>
-        <item>16</item>
-    </integer-array>
-    <string-array name="c2k_ir_integrity_off">
-        <item>disable integrity check OFF</item>
-        <item>disable integrity check ON</item>
     </string-array>
 </resources>

@@ -10,7 +10,6 @@ import android.os.SystemProperties;
 import android.provider.Settings;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -25,7 +24,9 @@ import com.android.internal.telephony.PhoneConstants;
 import com.android.internal.telephony.PhoneFactory;
 
 import com.mediatek.engineermode.FeatureSupport;
+import com.mediatek.engineermode.ModemCategory;
 import com.mediatek.engineermode.R;
+import com.mediatek.xlog.Xlog;
 
 import java.util.Arrays;
 
@@ -67,7 +68,6 @@ public class NetworkSelectActivity extends Activity {
     private static final int LTE_ONLY = Phone.NT_MODE_LTE_ONLY;
     private static final int CDMA_ONLY = 0;
     private static final int LTE_GSM_WCDMA = Phone.NT_MODE_LTE_GSM_WCDMA;
-    private static final int LTE_CDMA_EVDO_GSM_WCDMA = Phone.NT_MODE_LTE_CDMA_EVDO_GSM_WCDMA;
     private static final int LTE_GSM_WCDMA_PREFERRED = 31;
     //RILConstants.NETWORK_MODE_LTE_GSM_WCDMA_PREF;
     private static final int LTE_WCDMA = Phone.NT_MODE_LTE_WCDMA;
@@ -86,7 +86,7 @@ public class NetworkSelectActivity extends Activity {
     private OnItemSelectedListener mPreferredNetworkListener = new OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView parent, View v, int pos, long id) {
-            Log.d("@M_" + TAG, "onItemSelected " + pos);
+            Xlog.d(TAG, "onItemSelected " + pos);
             if (mCurrentSelected == pos) {
                 return; // avoid listener being invoked by setSelection()
             }
@@ -95,14 +95,29 @@ public class NetworkSelectActivity extends Activity {
             Message msg = mHandler.obtainMessage(EVENT_SET_NETWORKMODE_DONE);
             int selectNetworkMode = mNetworkTypeValues[pos];
 
-            Log.d("@M_" + TAG, "selectNetworkMode " + selectNetworkMode);
+            Xlog.d(TAG, "selectNetworkMode " + selectNetworkMode);
             Settings.Global.putInt(getContentResolver(),
                     Settings.Global.PREFERRED_NETWORK_MODE + mSubId, selectNetworkMode);
- 
-            msg = mHandler.obtainMessage(EVENT_SET_NETWORKMODE_DONE);
-            if (mPhone != null) {
-                mPhone.setPreferredNetworkType(selectNetworkMode, msg);
+            if (ModemCategory.isCdma()) {
+                if (pos == INDEX_LTE_ONLY) {
+                    String[] cmd = new String[] {"AT+ERAT=3", ""};
+                    mPhone.invokeOemRilRequestStrings(cmd, msg);
+                    msg = mHandler.obtainMessage(EVENT_SET_NETWORKMODE_DONE);
+                    cmd = new String[] {"AT+EMDSTATUS=0,0", ""};
+                    mCdmaPhone.invokeOemRilRequestStrings(cmd, msg);
+                    return;
+                }
+                if (pos == INDEX_CDMA_ONLY) {
+                    String[] cmd = new String[] {"AT+EFUN=0", ""};
+                    mPhone.invokeOemRilRequestStrings(cmd, msg);
+                    msg = mHandler.obtainMessage(EVENT_SET_NETWORKMODE_DONE);
+                    cmd = new String[] {"AT+EMDSTATUS=1,0", ""};
+                    mCdmaPhone.invokeOemRilRequestStrings(cmd, msg);
+                    return;
+                }
             }
+            msg = mHandler.obtainMessage(EVENT_SET_NETWORKMODE_DONE);
+            mPhone.setPreferredNetworkType(selectNetworkMode, msg);
         }
 
         @Override
@@ -119,7 +134,7 @@ public class NetworkSelectActivity extends Activity {
                 ar = (AsyncResult) msg.obj;
                 if (ar.exception == null) {
                     int type = ((int[]) ar.result)[0];
-                    Log.d("@M_" + TAG, "Get Preferred Type " + type);
+                    Xlog.d(TAG, "Get Preferred Type " + type);
                     int index = findSpinnerIndexByType(type);
                     if (index >= 0 && index < mPreferredNetworkSpinner.getCount()) {
                         mCurrentSelected = index;
@@ -132,7 +147,7 @@ public class NetworkSelectActivity extends Activity {
                 break;
             case EVENT_SET_NETWORKMODE_DONE:
                 ar = (AsyncResult) msg.obj;
-                if ((ar.exception != null) && (mPhone != null)) {
+                if (ar.exception != null) {
                     mPhone.getPreferredNetworkType(obtainMessage(EVENT_QUERY_NETWORKMODE_DONE));
                 }
                 break;
@@ -163,7 +178,7 @@ public class NetworkSelectActivity extends Activity {
         @Override
         public View getDropDownView(int position, View convertView, ViewGroup parent) {
             View v = null;
-            Log.d("@M_" + TAG, "isAvailable: " + position + " is " + isAvailable(position));
+            Xlog.d(TAG, "isAvailable: " + position + " is " + isAvailable(position));
             if (!isAvailable(position)) {
                 TextView tv = new TextView(getContext());
                 tv.setVisibility(View.GONE);
@@ -177,8 +192,15 @@ public class NetworkSelectActivity extends Activity {
     }
 
     private boolean isAvailable(int index) {
-   
-    
+        if (mModemType == ModemCategory.MODEM_TD
+                && (index == INDEX_WCDMA_PREFERRED || index == INDEX_WCDMA_ONLY
+                    || index == INDEX_GSM_WCDMA_AUTO)) {
+            return false;
+        }
+        if (mModemType == ModemCategory.MODEM_FDD
+                && (index == INDEX_TDSCDMA_ONLY || index == INDEX_GSM_TDSCDMA_AUTO)) {
+            return false;
+        }
         if (!FeatureSupport.isSupported(FeatureSupport.FK_LTE_SUPPORT)
                 && (index == INDEX_LTE_ONLY || index == INDEX_LTE_GSM_WCDMA
                     || index == INDEX_LTE_WCDMA)) {
@@ -188,7 +210,7 @@ public class NetworkSelectActivity extends Activity {
                 && index == INDEX_WCDMA_PREFERRED) {
             return false;
         }
-        if (index == INDEX_CDMA_ONLY) {
+        if (!ModemCategory.isCdma() && index == INDEX_CDMA_ONLY) {
             return false;
         }
         return true;
@@ -199,78 +221,103 @@ public class NetworkSelectActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.networkmode_switching);
         mPreferredNetworkSpinner = (Spinner) findViewById(R.id.networkModeSwitching);
-        //if (!ModemCategory.isCdma()) {
-            findViewById(R.id.network_mode_set_hint).setVisibility(View.GONE);
-        //}
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //mSimType = getIntent().getIntExtra("mSimType", ModemCategory.getCapabilitySim());
-        Log.i("@M_" + TAG, "mSimType " + mSimType);
+        mSimType = getIntent().getIntExtra("mSimType", ModemCategory.getCapabilitySim());
+        Xlog.i(TAG, "mSimType " + mSimType);
         int[] subId = SubscriptionManager.getSubId(mSimType);
         if (subId != null) {
             for (int i = 0; i < subId.length; i++) {
-                Log.i("@M_" + TAG, "subId[" + i + "]: " + subId[i]);
+                Xlog.i(TAG, "subId[" + i + "]: " + subId[i]);
             }
         }
         if (subId == null || subId.length == 0
                 || !SubscriptionManager.isValidSubscriptionId(subId[0])) {
             Toast.makeText(this, "Invalid sub id, please insert SIM Card!",
                     Toast.LENGTH_LONG).show();
-            Log.e("@M_" + TAG, "Invalid sub id");
+            Xlog.e(TAG, "Invalid sub id");
         } else {
             mSubId = subId[0];
         }
 
         if (TelephonyManager.getDefault().getPhoneCount() > 1) {
             mPhone = PhoneFactory.getPhone(mSimType);
+            if (mPhone.getPhoneType() == PhoneConstants.PHONE_TYPE_CDMA) {
+                mPhone = PhoneFactory.getPhone(PhoneConstants.SIM_ID_2);
+            }
         } else {
             mPhone = PhoneFactory.getDefaultPhone();
         }
-
-
- 
-
-        mCurrentSelected = 0;
-
+        if (ModemCategory.isCdma()) {
+            mCdmaPhone = PhoneFactory.getPhone(PhoneConstants.SIM_ID_1);
+        }
+        mModemType = ModemCategory.getModemType();
+        if (mModemType != ModemCategory.MODEM_NO3G) {
             String[] labels = getResources().getStringArray(R.array.network_mode_labels);
             CustomAdapter adapter =
                     new CustomAdapter(this, android.R.layout.simple_spinner_item, labels);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             mPreferredNetworkSpinner.setAdapter(adapter);
             mPreferredNetworkSpinner.setOnItemSelectedListener(mPreferredNetworkListener);
-
-
-        if (mPhone != null) {
-            mPhone.getPreferredNetworkType(mHandler.obtainMessage(EVENT_QUERY_NETWORKMODE_DONE));
+        } else {
+//            mPreferredNetworkSpinner.setEnabled(false);
+            Xlog.w(TAG, "Isn't TD/WCDMA modem: " + mModemType);
+            String[] labels = new String[] {"GSM only"};
+            mNetworkTypeValues = new int[] {GSM_ONLY};
+            CustomAdapter adapter =
+                    new CustomAdapter(this, android.R.layout.simple_spinner_item, labels);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            mPreferredNetworkSpinner.setAdapter(adapter);
+            mPreferredNetworkSpinner.setOnItemSelectedListener(mPreferredNetworkListener);
         }
+
+        mPhone.getPreferredNetworkType(mHandler.obtainMessage(EVENT_QUERY_NETWORKMODE_DONE));
     }
 
     private int getModemType() {
-        int mode = MODEM_NO3G;
-        int mask = 1;
-        if (mask == 2) {
-                    mode = MODEM_TD;
-        } else if (mask == 1) {
-            mode = MODEM_FDD;
-        } else {
-            mode = MODEM_NO3G;
+        String mt = SystemProperties.get("gsm.baseband.capability");
+        Xlog.i(TAG, "gsm.baseband.capability " + mt);
+        if (FeatureSupport.isSupported(FeatureSupport.FK_DT_SUPPORT)
+                && mSimType == PhoneConstants.SIM_ID_2) {
+            mt = SystemProperties.get("gsm.baseband.capability.md2");
+            Xlog.i(TAG, "gsm.baseband.capability.md2 " + mt);
         }
-        Log.i("@M_" + TAG, "mode = " + mode);
+        int mode = MODEM_NO3G;
+
+        if (mt == null) {
+            mode = MODEM_NO3G;
+        } else {
+            try {
+                int mask = Integer.valueOf(mt);
+                if ((mask & MODEM_MASK_TDSCDMA) == MODEM_MASK_TDSCDMA) {
+                    mode = MODEM_TD;
+                } else if ((mask & MODEM_MASK_WCDMA) == MODEM_MASK_WCDMA) {
+                    mode = MODEM_FDD;
+                } else {
+                    mode = MODEM_NO3G;
+                }
+            } catch (NumberFormatException e) {
+                mode = MODEM_NO3G;
+            }
+        }
         return mode;
     }
 
     private int findSpinnerIndexByType(int type) {
- 
+        // Not WCDMA preferred for TD
+        if (type == WCDMA_PREFERRED && mModemType == ModemCategory.MODEM_TD) {
+            type = GSM_WCDMA_AUTO;
+        }
         // Not support WCDMA preferred
         if (type == WCDMA_PREFERRED
                 && !FeatureSupport.isSupported(FeatureSupport.FK_WCDMA_PREFERRED)) {
             type = GSM_WCDMA_AUTO;
         }
         // Consider LTE_GSM_WCDMA_PREFERRED as same with LTE_GSM_WCDMA
-        if (type == LTE_GSM_WCDMA_PREFERRED || type == LTE_CDMA_EVDO_GSM_WCDMA) {
+        if (type == LTE_GSM_WCDMA_PREFERRED) {
             type = LTE_GSM_WCDMA;
         }
         for (int i = 0; i < mNetworkTypeValues.length; i++) {

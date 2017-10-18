@@ -46,7 +46,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -54,6 +53,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.mediatek.engineermode.R;
+import com.mediatek.xlog.Xlog;
 
 
 public class PSensorChangeThreshold extends Activity implements OnClickListener {
@@ -103,17 +103,17 @@ public class PSensorChangeThreshold extends Activity implements OnClickListener 
             public void handleMessage(Message msg) {
                 switch (msg.what) {
                 case MSG_SET_SUCCESS:
-                    Log.d("@M_" + TAG, "set success");
+                    Xlog.d(TAG, "set success");
                     mBtnSet.setClickable(true);
                     showToast("Set threshold succeed");
                     break;
                 case MSG_SET_FAILURE:
-                    Log.d("@M_" + TAG, "set fail");
+                    Xlog.d(TAG, "set fail");
                     mBtnSet.setClickable(true);
                     showToast("Set threshold failed");
                     break;
                 case MSG_INVALID_NUMBER:
-                    Log.d("@M_" + TAG, "set fail");
+                    Xlog.d(TAG, "set fail");
                     mBtnSet.setClickable(true);
                     showToast("Invalid value");
                     break;
@@ -126,7 +126,7 @@ public class PSensorChangeThreshold extends Activity implements OnClickListener 
         mHandler = new Handler(mHandlerThread.getLooper()) {
             public void handleMessage(Message msg) {
                 if (MSG_CHANGE_THRESHOLD == msg.what) {
-                    Log.d("@M_" + TAG, String.format("MSG_CHANGE_THRESHOLD"));
+                    Xlog.d(TAG, String.format("MSG_CHANGE_THRESHOLD"));
                     int high = 0, low = 0;
                     try {
                         high = Integer.parseInt(mEtHigh.getText().toString());
@@ -152,7 +152,7 @@ public class PSensorChangeThreshold extends Activity implements OnClickListener 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("@M_" + TAG, "onResume()");
+        Xlog.d(TAG, "onResume()");
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         mSensorManager.registerListener(mSensorEventListener, mSensor, SensorManager.SENSOR_DELAY_UI);
@@ -160,7 +160,7 @@ public class PSensorChangeThreshold extends Activity implements OnClickListener 
 
     @Override
     protected void onPause() {
-        Log.d("@M_" + TAG, "onPause()");
+        Xlog.d(TAG, "onPause()");
         mSensorManager.unregisterListener(mSensorEventListener);
         mSensorManager = null;
         super.onPause();
@@ -169,7 +169,7 @@ public class PSensorChangeThreshold extends Activity implements OnClickListener 
     @Override
     public void onClick(View arg0) {
         if (arg0.getId() == mBtnSet.getId()) {
-            Log.d("@M_" + TAG, "change threshold");
+            Xlog.d(TAG, "change threshold");
             mHandler.sendEmptyMessage(MSG_CHANGE_THRESHOLD);
         }
         mBtnSet.setClickable(false);

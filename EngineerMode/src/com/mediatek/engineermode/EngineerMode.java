@@ -43,13 +43,9 @@ import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
-import android.content.Context;
-import android.net.ConnectivityManager;
 
-
-
+import com.mediatek.xlog.Xlog;
 
 /**
  * This is main UI of EngineerMode. It uses viewPager to show each classified
@@ -68,23 +64,26 @@ import android.net.ConnectivityManager;
 public class EngineerMode extends Activity {
 
     private static final String TAG = "EM/MainView";
-    private static int TAB_COUNT = 6; // Total count of PagerView
-    private static int TAB_COUNT_WIFIONLY = 5; // Total count of PagerView
+/* Vanzo:tanglei on: Mon, 19 Jan 2015 10:37:19 +0800
+    private static final int TAB_COUNT = 6; // Total count of PagerView
+ */
+    private static final int TAB_COUNT = 7; // Total count of PagerView
+// End of Vanzo:tanglei
     // Define each tabs which will attach to PagerView
     private PrefsFragment mTabs[] = new PrefsFragment[TAB_COUNT];
 
     // Record each viewPager title string IDs in array:
-    private static int[] TAB_TITLE_IDS = { R.string.tab_telephony,
+/* Vanzo:tanglei on: Mon, 19 Jan 2015 10:38:09 +0800
+    private static final int[] TAB_TITLE_IDS = { R.string.tab_telephony,
             R.string.tab_connectivity, R.string.tab_hardware_testing,
             R.string.tab_location, R.string.tab_log_and_debugging,
             R.string.tab_others, };
-
-    private static int[] TAB_TITLE_IDS_WIFIONLY = {
+ */
+    private static final int[] TAB_TITLE_IDS = { R.string.tab_telephony,
             R.string.tab_connectivity, R.string.tab_hardware_testing,
             R.string.tab_location, R.string.tab_log_and_debugging,
-            R.string.tab_others, };
-
-    private MyPagerAdapter mPagerAdapter;
+            R.string.tab_others, R.string.tab_others_ex};
+// End of Vanzo:tanglei
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -94,13 +93,7 @@ public class EngineerMode extends Activity {
         final FragmentManager fragmentManager = getFragmentManager();
         final FragmentTransaction transaction = fragmentManager
                 .beginTransaction();
-
-        if(isWifiOnly()){
-            TAB_TITLE_IDS = TAB_TITLE_IDS_WIFIONLY;
-            TAB_COUNT = TAB_COUNT_WIFIONLY;
-        }
-
-        Log.v("@M_" + TAG, "new fregments");
+        Xlog.v(TAG, "new fregments");
         for (int i = 0; i < TAB_COUNT; i++) {
             mTabs[i] = new PrefsFragment();
             mTabs[i].setResource(i);
@@ -117,32 +110,13 @@ public class EngineerMode extends Activity {
                 .setTabIndicatorColorResource(android.R.color.holo_blue_light);
 
         transaction.commitAllowingStateLoss();
-//        fragmentManager.executePendingTransactions();
+        fragmentManager.executePendingTransactions();
 
-        mPagerAdapter = new MyPagerAdapter();
-        viewPager.setAdapter(mPagerAdapter);
+        MyPagerAdapter pagerAdapter = new MyPagerAdapter();
+        viewPager.setAdapter(pagerAdapter);
         viewPager.setCurrentItem(0);
-    }
 
-   private boolean isWifiOnly() {
-        ConnectivityManager connManager = (ConnectivityManager) EngineerMode.this
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
-        boolean bWifiOnly = false;
-        if (null != connManager) {
-            bWifiOnly = !connManager
-                    .isNetworkSupported(ConnectivityManager.TYPE_MOBILE);
-            Log.i("@M_" + TAG, "bWifiOnly: " + bWifiOnly);
-        }
-        return bWifiOnly;
     }
-
-    @Override
-    protected void onResume() {
-        // TODO Auto-generated method stub
-        super.onResume();
-        mPagerAdapter.updateCurrentFragment();
-    }
-
 
     class MyPagerAdapter extends PagerAdapter {
         private final FragmentManager mFragmentManager;
@@ -206,7 +180,6 @@ public class EngineerMode extends Activity {
                     mCurPrimaryItem.setUserVisibleHint(false);
                 }
                 mCurPrimaryItem = fragment;
-                mCurPrimaryItem.setUserVisibleHint(true);
             }
         }
 
@@ -216,13 +189,5 @@ public class EngineerMode extends Activity {
             }
             throw new IllegalArgumentException("position: " + position);
         }
-
-        public void updateCurrentFragment() {
-            if (mCurPrimaryItem != null) {
-                mCurPrimaryItem.setUserVisibleHint(true);
-            }
-
-        }
     }
-
 }

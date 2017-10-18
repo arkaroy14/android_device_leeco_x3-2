@@ -63,7 +63,7 @@ public class Power extends Activity implements OnItemClickListener {
 
         if (tpListView == null) {
             Elog.e("Power", "clocwork worked...");
-            return;
+            // not return and let exception happened.
         }
         List<String> items = new ArrayList<String>();
         items.add("Charge Battery");

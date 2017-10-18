@@ -37,7 +37,7 @@ package com.mediatek.engineermode;
 
 import com.mediatek.engineermode.emsvr.AFMFunctionCallEx;
 import com.mediatek.engineermode.emsvr.FunctionReturn;
-import android.util.Log;
+import com.mediatek.xlog.Xlog;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -120,12 +120,12 @@ public class ShellExe {
                 }
                 result = RESULT_SUCCESS;
             } else {
-                Log.i("@M_" + TAG, "exit value = " + proc.exitValue());
+                Xlog.i(TAG, "exit value = " + proc.exitValue());
                 sResultBuilder.append(ERROR);
                 result = RESULT_FAIL;
             }
         } catch (InterruptedException e) {
-            Log.i("@M_" + TAG, "exe shell command InterruptedException: "
+            Xlog.i(TAG, "exe shell command InterruptedException: "
                     + e.getMessage());
             sResultBuilder.append(ERROR);
             result = RESULT_EXCEPTION;
@@ -134,7 +134,7 @@ public class ShellExe {
                 try {
                     bufferedReader.close();
                 } catch (IOException e) {
-                    Log.w("@M_" + TAG, "close reader in finally block exception: " + e.getMessage());
+                    Xlog.w(TAG, "close reader in finally block exception: " + e.getMessage());
                 }
             }
         }
@@ -191,13 +191,13 @@ public class ShellExe {
             }
             String output = sResultBuilder.toString();
             if (output != null && output.startsWith(OPERATION_ERROR_PREFIX)) {
-                Log.d("@M_" + TAG, "error operation:" + output);
+                Xlog.d(TAG, "error operation:" + output);
                 sResultBuilder.delete(0, OPERATION_ERROR_PREFIX.length() + 1);
                 return RESULT_FAIL;
             }
             return RESULT_SUCCESS;
         }
-        Log.d("@M_" + TAG, "Function call start fail");
+        Xlog.d(TAG, "Function call start fail");
         sResultBuilder.append(ERROR);
         return RESULT_FAIL;
     }

@@ -48,7 +48,6 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -57,6 +56,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.mediatek.engineermode.R;
+import com.mediatek.xlog.Xlog;
 
 /**
  * Do BT tx mode test.
@@ -129,7 +129,7 @@ public class TxOnlyTestActivity extends Activity implements
     // end added
     @Override
     public void onCreate(Bundle savedInstanceState) {
-//        Log.v("@M_" + TAG, "-->onCreate");
+//        Xlog.v(TAG, "-->onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tx_only_test);
         // Initialize the UI component
@@ -147,24 +147,24 @@ public class TxOnlyTestActivity extends Activity implements
             switch (msg.what) {
             case OP_IN_PROCESS:
                 // {
-                Log.w("@M_" + TAG, "OP_IN_PROCESS");
+                Xlog.w(TAG, "OP_IN_PROCESS");
                 showDialog(TEST_TX);
                 break;
             case OP_FINISH:
-                Log.i("@M_" + TAG, "OP_FINISH");
+                Xlog.i(TAG, "OP_FINISH");
                 removeDialog(TEST_TX);
                 break;
             case OP_TX_FAIL:
-                Log.i("@M_" + TAG, "OP_TX_FAIL");
+                Xlog.i(TAG, "OP_TX_FAIL");
                 // showDialog(DIALOG_CHECK_BT_DEVEICE);
                 removeDialog(TEST_TX);
                 break;
             case UI_BT_CLOSE:
-                Log.i("@M_" + TAG, "UI_BT_CLOSE");
+                Xlog.i(TAG, "UI_BT_CLOSE");
                 showDialog(DIALOG_BT_STOP);
                 break;
             case UI_BT_CLOSE_FINISHED:
-                Log.i("@M_" + TAG, "UI_BT_CLOSE_FINISHED");
+                Xlog.i(TAG, "UI_BT_CLOSE_FINISHED");
                 removeDialog(DIALOG_BT_STOP);
                 finish();
                 break;
@@ -186,17 +186,17 @@ public class TxOnlyTestActivity extends Activity implements
                 // do stop
                 if (mDumpStart == true) {
                     if (mBtTest != null) {
-                        Log.i("@M_" + TAG, "pollingStop");
+                        Xlog.i(TAG, "pollingStop");
                         mBtTest.pollingStop();
                         if (RETURN_FAIL == mBtTest.doBtTest(BT_TEST_3)) { // bt deinit
-                            Log.i("@M_" + TAG, "stop failed.");
+                            Xlog.i(TAG, "stop failed.");
                         }
                     }
                 }
                 doSendCommandAction();
                 // do start
                 if (mBtTest != null && mHasInit) {
-                    Log.i("@M_" + TAG, "pollingStart");
+                    Xlog.i(TAG, "pollingStart");
                     mBtTest.pollingStart();
                     mDumpStart = true;
                 }
@@ -207,12 +207,12 @@ public class TxOnlyTestActivity extends Activity implements
                 // do stop
                 if (mDumpStart == true) {
                     if (mBtTest != null) {
-                        Log.i("@M_" + TAG, "pollingStop");
+                        Xlog.i(TAG, "pollingStop");
                         mBtTest.pollingStop();
                     }
                 }
                 if (RETURN_FAIL == mBtTest.doBtTest(BT_TEST_3)) {
-                    Log.i("@M_" + TAG, "stop failed.");
+                    Xlog.i(TAG, "stop failed.");
                 }
                 mBtTest = null;
                 mUiHandler.sendEmptyMessage(UI_BT_CLOSE_FINISHED);
@@ -230,7 +230,7 @@ public class TxOnlyTestActivity extends Activity implements
                 doneItem.setEnabled(true);
             }
         } else {
-            Log.i("@M_" + TAG, "menu_done is not found.");
+            Xlog.i(TAG, "menu_done is not found.");
         }
         return true;
     }
@@ -284,16 +284,16 @@ public class TxOnlyTestActivity extends Activity implements
         case R.id.menu_done:
             // edited by chaozhogn @ 2010-10-10
             // return doSendCommandAction();
-            Log.i("@M_" + TAG, "menu_done is clicked.");
+            Xlog.i(TAG, "menu_done is clicked.");
             if (mDoneTest) {
                 // if the last click action has been handled, send another event
                 // request
                // mWorkHandler.post(new WorkRunnable());
                 mWorkHandler.sendEmptyMessage(OP_BT_SEND);
             } else {
-                Log.i("@M_" + TAG, "last click is not finished yet.");
+                Xlog.i(TAG, "last click is not finished yet.");
             }
-            Log.i("@M_" + TAG, "menu_done is handled.");
+            Xlog.i(TAG, "menu_done is handled.");
             return true;
             // edit end
 
@@ -319,14 +319,14 @@ public class TxOnlyTestActivity extends Activity implements
     public void onCancel(DialogInterface dialog) {
         // request that the service stop the query with this callback
         // mBtTestect.
-        Log.v("@M_" + TAG, "-->onCancel");
+        Xlog.v(TAG, "-->onCancel");
         finish();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Log.v("@M_" + TAG, "-->onStart");
+        Xlog.v(TAG, "-->onStart");
         if (mAdapter == null) {
             mAdapter = BluetoothAdapter.getDefaultAdapter();
         }
@@ -345,7 +345,7 @@ public class TxOnlyTestActivity extends Activity implements
 
     @Override
     public void onBackPressed() {
-        Log.v("@M_" + TAG, "-->onBackPressed ");
+        Xlog.v(TAG, "-->onBackPressed ");
         removeDialog(TEST_TX);
         if (mBtTest != null) {
             mWorkHandler.sendEmptyMessage(OP_BT_STOP);
@@ -355,7 +355,7 @@ public class TxOnlyTestActivity extends Activity implements
     }
     @Override
     public void onDestroy() {
-        Log.v("@M_" + TAG, "-->onDestroy");
+        Xlog.v(TAG, "-->onDestroy");
         if (mWorkThread != null) {
             mWorkThread.quit();
         }
@@ -364,13 +364,13 @@ public class TxOnlyTestActivity extends Activity implements
 
     @Override
     protected Dialog onCreateDialog(int id) {
-        Log.i("@M_" + TAG, "-->onCreateDialog");
+        Xlog.i(TAG, "-->onCreateDialog");
         if (id == TEST_TX) {
             ProgressDialog dialog = new ProgressDialog(this);
             dialog.setMessage(getString(R.string.BT_init_dev));
             dialog.setCancelable(false);
             dialog.setIndeterminate(true);
-            Log.i("@M_" + TAG, "new ProgressDialog succeed");
+            Xlog.i(TAG, "new ProgressDialog succeed");
             return dialog;
         } else if (id == CHECK_BT_STATE) {
             AlertDialog dialog = null;
@@ -398,10 +398,10 @@ public class TxOnlyTestActivity extends Activity implements
     }
 
     private void getBtState() {
-        Log.v("@M_" + TAG, "Enter GetBtState().");
+        Xlog.v(TAG, "Enter GetBtState().");
         BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
         if (null == btAdapter) {
-            Log.i("@M_" + TAG, "we can not find a bluetooth adapter.");
+            Xlog.i(TAG, "we can not find a bluetooth adapter.");
             // Toast.makeText(getApplicationContext(),
             // "We can not find a bluetooth adapter.", Toast.LENGTH_SHORT)
             // .show();
@@ -409,26 +409,26 @@ public class TxOnlyTestActivity extends Activity implements
             return;
         }
         mStateBt = btAdapter.getState();
-        Log.i("@M_" + TAG, "Leave GetBtState().");
+        Xlog.i(TAG, "Leave GetBtState().");
     }
 
     private void enableBluetooth(boolean enable) {
-        Log.v("@M_" + TAG, "Enter EnableBluetooth().");
+        Xlog.v(TAG, "Enter EnableBluetooth().");
         BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
         if (null == btAdapter) {
-            Log.i("@M_" + TAG, "we can not find a bluetooth adapter.");
+            Xlog.i(TAG, "we can not find a bluetooth adapter.");
             return;
         }
         // need to enable
         if (enable) {
-            Log.i("@M_" + TAG, "Bluetooth is enabled");
+            Xlog.i(TAG, "Bluetooth is enabled");
             btAdapter.enable();
         } else {
             // need to disable
-            Log.i("@M_" + TAG, "Bluetooth is disabled");
+            Xlog.i(TAG, "Bluetooth is disabled");
             btAdapter.disable();
         }
-        Log.i("@M_" + TAG, "Leave EnableBluetooth().");
+        Xlog.i(TAG, "Leave EnableBluetooth().");
     }
 
     /**
@@ -436,7 +436,7 @@ public class TxOnlyTestActivity extends Activity implements
      */
     private boolean doRevertAction() {
         //finish();
-        Log.i("@M_" + TAG, "doRevertAction");
+        Xlog.i(TAG, "doRevertAction");
         onBackPressed();
         return true;
     }
@@ -444,7 +444,7 @@ public class TxOnlyTestActivity extends Activity implements
     // private BtTest mBtTest = null;
 
     public void getValuesAndSend() {
-        Log.i("@M_" + TAG, "Enter GetValuesAndSend().");
+        Xlog.i(TAG, "Enter GetValuesAndSend().");
         mBtTest = new BtTest();
 
         getSpinnerValue(mPattern, MAP_TO_PATTERN);
@@ -456,11 +456,11 @@ public class TxOnlyTestActivity extends Activity implements
 
         // send command to....
         // new issue added by mtk54040 Shuaiqiang @2011-10-12
-        Log.i("@M_" + TAG, "PocketType().+" + mBtTest.getPocketType());
-        Log.i("@M_" + TAG, "edtFrequency+" + mBtTest.getFreq());
+        Xlog.i(TAG, "PocketType().+" + mBtTest.getPocketType());
+        Xlog.i(TAG, "edtFrequency+" + mBtTest.getFreq());
         if (27 == mBtTest.getPocketType()) {
-            Log.i("@M_" + TAG, "enter handleNonModulated(mBtTest)");
-            Log.i("@M_" + TAG, "mbIsNonModulate--" + mNonModulate
+            Xlog.i(TAG, "enter handleNonModulated(mBtTest)");
+            Xlog.i(TAG, "mbIsNonModulate--" + mNonModulate
                     + "   mbIsPocketType--" + mPocketType);
             if (mPocketType) { // mbIsPocketType for avoid mBtTest is null
                 runHCIResetCmd();
@@ -479,7 +479,7 @@ public class TxOnlyTestActivity extends Activity implements
             }
             mPocketType = true;
             if (RETURN_FAIL == mBtTest.doBtTest(BT_TEST_0)) {
-                Log.i("@M_" + TAG, "transmit data failed.");
+                Xlog.i(TAG, "transmit data failed.");
                 if ((BluetoothAdapter.STATE_TURNING_ON == mStateBt)
                         || (BluetoothAdapter.STATE_ON == mStateBt)) {
                     enableBluetooth(true);
@@ -492,11 +492,11 @@ public class TxOnlyTestActivity extends Activity implements
                 mHasInit = true;
             }
         }
-        Log.i("@M_" + TAG, "Leave getValuesAndSend().");
+        Xlog.i(TAG, "Leave getValuesAndSend().");
     }
 
     private void handleNonModulated() {
-        Log.i("@M_" + TAG, "-->handleNonModulated TX first");
+        Xlog.i(TAG, "-->handleNonModulated TX first");
         /*
          * If pressing "Stop" button Tx: 01 0C 20 02 00 PP 0xPP = Filter
          * Duplicate (00 = Disable Duplicate Filtering, 01 = Enable Duplicate
@@ -521,14 +521,14 @@ public class TxOnlyTestActivity extends Activity implements
             String s = null;
             for (i = 0; i < response.length; i++) {
                 s = String.format("response[%d] = 0x%x", i, (long) response[i]);
-                Log.i("@M_" + TAG, s);
+                Xlog.i(TAG, s);
             }
         } else {
-            Log.i("@M_" + TAG, "HCICommandRun failed");
+            Xlog.i(TAG, "HCICommandRun failed");
         }
         response = null;
 
-        Log.i("@M_" + TAG, "-->handleNonModulated TX second");
+        Xlog.i(TAG, "-->handleNonModulated TX second");
         cmdLen = 5;
         cmd[0] = 0x01;
         cmd[1] = 0xD5;
@@ -540,17 +540,17 @@ public class TxOnlyTestActivity extends Activity implements
             String s = null;
             for (i = 0; i < response.length; i++) {
                 s = String.format("response[%d] = 0x%x", i, (long) response[i]);
-                Log.i("@M_" + TAG, s);
+                Xlog.i(TAG, s);
             }
         } else {
-            Log.i("@M_" + TAG, "HCICommandRun failed");
+            Xlog.i(TAG, "HCICommandRun failed");
         }
         response = null;
     }
 
     // init BtTest -call init function of BtTest
     private boolean initBtTestOjbect() {
-        Log.i("@M_" + TAG, "-->initBtTestOjbect");
+        Xlog.i(TAG, "-->initBtTestOjbect");
         if (mIniting) {
             return false;
         }
@@ -564,7 +564,7 @@ public class TxOnlyTestActivity extends Activity implements
             mIniting = true;
             if (mBtTest.init() != 0) {
                 mHasInit = false;
-                Log.i("@M_" + TAG, "mBtTest initialization failed");
+                Xlog.i(TAG, "mBtTest initialization failed");
             } else {
                 runHCIResetCmd();
                 mHasInit = true;
@@ -576,11 +576,11 @@ public class TxOnlyTestActivity extends Activity implements
 
     // clear BtTest mBtTestect -call deInit function of BtTest
     // private boolean uninitBtTestOjbect() {
-    // Log.i("@M_" + TAG, "-->uninitBtTestOjbect");
+    // Xlog.i(TAG, "-->uninitBtTestOjbect");
     // if (mBtTest != null && mbIsInit) {
     // runHCIResetCmd();
     // if (mBtTest.unInit() != 0) {
-    // Log.i("@M_" + TAG, "mBtTest un-initialization failed");
+    // Xlog.i(TAG, "mBtTest un-initialization failed");
     // }
     // }
     // mBtTest = null;
@@ -599,7 +599,7 @@ public class TxOnlyTestActivity extends Activity implements
 
         char[] response = null;
         int i = 0;
-        Log.i("@M_" + TAG, "-->runHCIResetCmd");
+        Xlog.i(TAG, "-->runHCIResetCmd");
         cmd[0] = 0x01;
         cmd[1] = 0x03;
         cmd[2] = 0x0C;
@@ -612,10 +612,10 @@ public class TxOnlyTestActivity extends Activity implements
             String s = null;
             for (i = 0; i < response.length; i++) {
                 s = String.format("response[%d] = 0x%x", i, (long) response[i]);
-                Log.i("@M_" + TAG, s);
+                Xlog.i(TAG, s);
             }
         } else {
-            Log.i("@M_" + TAG, "HCICommandRun failed");
+            Xlog.i(TAG, "HCICommandRun failed");
         }
         response = null;
     }
@@ -660,7 +660,7 @@ public class TxOnlyTestActivity extends Activity implements
         try {
             iLen = Integer.parseInt(str);
         } catch (NumberFormatException e) {
-            Log.i("@M_" + TAG, "parseInt failed--invalid number!");
+            Xlog.i(TAG, "parseInt failed--invalid number!");
             return bSuccess;
         }
         // frequency

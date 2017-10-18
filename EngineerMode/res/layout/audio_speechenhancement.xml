@@ -40,7 +40,6 @@
             android:layout_marginLeft="40dip"
             android:layout_marginTop="20dip"
             android:numeric="integer"
-            android:singleLine="true"
             android:text="@string/Audio_SpEnhancement_EditText" >
         </EditText>
 
