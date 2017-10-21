@@ -1,1 +1,1 @@
-add_lunch_combo carbon_x3-userdebug
+add_lunch_combo x3-userdebug
